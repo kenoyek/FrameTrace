@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "frametrace-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "python-multipart>=0.0.20,<1",
+  "sqlalchemy>=2.0,<3", "psycopg[binary]>=3.2,<4", "celery[redis]>=5.4,<6",
+  "numpy>=2.2,<3", "opencv-python-headless>=4.11,<5", "pydantic-settings>=2.8,<3"
+]
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "httpx>=0.28,<1", "ruff>=0.11,<1"]
+[project.scripts]
+frametrace = "frametrace.cli:main"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+[tool.ruff]
+line-length = 100

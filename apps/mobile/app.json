@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "FrameTrace",
+    "slug": "frametrace",
+    "scheme": "frametrace",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.frametrace.mobile"
+    },
+    "android": {
+      "package": "app.frametrace.mobile"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Choose a video to identify its source.",
+          "microphonePermission": false,
+          "cameraPermission": false
+        }
+      ],
+      "expo-video"
+    ]
+  }
+}

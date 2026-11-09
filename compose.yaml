@@ -1,0 +1,53 @@
+name: frametrace
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: frametrace
+      POSTGRES_USER: frametrace
+      POSTGRES_PASSWORD: local-development-only
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U frametrace"]
+      interval: 3s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      retries: 20
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/Dockerfile
+    image: frametrace-api:local
+    init: true
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"]
+      interval: 3s
+      retries: 20
+    environment: &api_environment
+      FRAMETRACE_DATABASE_URL: postgresql+psycopg://frametrace:local-development-only@postgres:5432/frametrace
+      FRAMETRACE_BROKER_URL: redis://redis:6379/0
+    ports: ["127.0.0.1:8000:8000"]
+    volumes: ["media:/app/var"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+  worker:
+    image: frametrace-api:local
+    environment: *api_environment
+    command: ["celery", "-A", "frametrace.tasks.celery", "worker", "--concurrency=2", "--loglevel=INFO"]
+    volumes: ["media:/app/var"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+      api: {condition: service_healthy}
+    init: true
+    security_opt: ["no-new-privileges:true"]
+volumes:
+  postgres:
+  media:

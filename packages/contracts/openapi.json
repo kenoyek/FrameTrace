@@ -1,0 +1,439 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FrameTrace",
+    "description": "Controlled-catalog video recognition. Local development API.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/recognitions": {
+      "post": {
+        "summary": "Create Recognition",
+        "operationId": "create_recognition_v1_recognitions_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_create_recognition_v1_recognitions_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/recognitions/{job_id}": {
+      "get": {
+        "summary": "Get Recognition",
+        "operationId": "get_recognition_v1_recognitions__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecognitionJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Recognition",
+        "operationId": "delete_recognition_v1_recognitions__job_id__delete",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AcceptedJob": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "status": {
+            "type": "string",
+            "const": "queued",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "access_token",
+          "status"
+        ],
+        "title": "AcceptedJob"
+      },
+      "Body_create_recognition_v1_recognitions_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_create_recognition_v1_recognitions_post"
+      },
+      "Candidate": {
+        "properties": {
+          "reference_id": {
+            "type": "string",
+            "title": "Reference Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "publisher": {
+            "type": "string",
+            "title": "Publisher"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          },
+          "start_seconds": {
+            "type": "number",
+            "title": "Start Seconds"
+          },
+          "timestamp_uncertainty_seconds": {
+            "type": "number",
+            "title": "Timestamp Uncertainty Seconds"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          "ranking_score": {
+            "type": "number",
+            "title": "Ranking Score"
+          },
+          "attribution": {
+            "type": "string",
+            "const": "indexed_reference",
+            "title": "Attribution"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reference_id",
+          "title",
+          "publisher",
+          "source_url",
+          "start_seconds",
+          "timestamp_uncertainty_seconds",
+          "evidence",
+          "ranking_score",
+          "attribution"
+        ],
+        "title": "Candidate"
+      },
+      "Evidence": {
+        "properties": {
+          "aligned_frames": {
+            "type": "integer",
+            "title": "Aligned Frames"
+          },
+          "query_frames": {
+            "type": "integer",
+            "title": "Query Frames"
+          },
+          "coverage": {
+            "type": "number",
+            "title": "Coverage"
+          },
+          "mean_hash_distance": {
+            "type": "number",
+            "title": "Mean Hash Distance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "aligned_frames",
+          "query_frames",
+          "coverage",
+          "mean_hash_distance"
+        ],
+        "title": "Evidence"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "RecognitionJob": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "extracting_features",
+              "searching_catalog",
+              "verifying_candidates",
+              "completed",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecognitionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "result",
+          "error"
+        ],
+        "title": "RecognitionJob"
+      },
+      "RecognitionResult": {
+        "properties": {
+          "classification": {
+            "type": "string",
+            "enum": [
+              "matching_segment",
+              "possible_match",
+              "no_match"
+            ],
+            "title": "Classification"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/Candidate"
+            },
+            "type": "array",
+            "title": "Candidates"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "elapsed_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Elapsed Seconds"
+          }
+        },
+        "type": "object",
+        "required": [
+          "classification",
+          "candidates",
+          "reason"
+        ],
+        "title": "RecognitionResult"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "scope": "Original synthetic development fixtures only; no holdout or real-world accuracy claim.",
+  "fingerprint_version": "dhash64-v1-fps2",
+  "top_1_retrieval": 0.75,
+  "out_of_catalog_rejection": 1.0,
+  "p50_latency_seconds": 0.1391,
+  "p95_latency_seconds": 0.17193999999999998,
+  "cases": [
+    {
+      "case": "clean",
+      "classification": "matching_segment",
+      "expected_match": true,
+      "correct_decision": true,
+      "timestamp_error_seconds": 0.0,
+      "latency_seconds": 0.1397,
+      "result": {
+        "classification": "matching_segment",
+        "candidates": [
+          {
+            "reference_id": "synthetic-42",
+            "title": "Generated fixture 42",
+            "publisher": "FrameTrace",
+            "source_url": null,
+            "start_seconds": 4.0,
+            "timestamp_uncertainty_seconds": 0.5,
+            "evidence": {
+              "aligned_frames": 12,
+              "query_frames": 12,
+              "coverage": 1.0,
+              "mean_hash_distance": 0.08
+            },
+            "ranking_score": 0.9986979166666666,
+            "attribution": "indexed_reference"
+          }
+        ],
+        "reason": "Consecutive visual fingerprints align to an indexed recording; original ownership is unverified."
+      }
+    },
+    {
+      "case": "compressed",
+      "classification": "matching_segment",
+      "expected_match": true,
+      "correct_decision": true,
+      "timestamp_error_seconds": 0.0,
+      "latency_seconds": 0.1254,
+      "result": {
+        "classification": "matching_segment",
+        "candidates": [
+          {
+            "reference_id": "synthetic-42",
+            "title": "Generated fixture 42",
+            "publisher": "FrameTrace",
+            "source_url": null,
+            "start_seconds": 4.0,
+            "timestamp_uncertainty_seconds": 0.5,
+            "evidence": {
+              "aligned_frames": 12,
+              "query_frames": 12,
+              "coverage": 1.0,
+              "mean_hash_distance": 0.92
+            },
+            "ranking_score": 0.9856770833333334,
+            "attribution": "indexed_reference"
+          }
+        ],
+        "reason": "Consecutive visual fingerprints align to an indexed recording; original ownership is unverified."
+      }
+    },
+    {
+      "case": "cropped",
+      "classification": "no_match",
+      "expected_match": true,
+      "correct_decision": false,
+      "timestamp_error_seconds": null,
+      "latency_seconds": 0.1391,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "captioned",
+      "classification": "matching_segment",
+      "expected_match": true,
+      "correct_decision": true,
+      "timestamp_error_seconds": 0.0,
+      "latency_seconds": 0.1391,
+      "result": {
+        "classification": "matching_segment",
+        "candidates": [
+          {
+            "reference_id": "synthetic-42",
+            "title": "Generated fixture 42",
+            "publisher": "FrameTrace",
+            "source_url": null,
+            "start_seconds": 4.0,
+            "timestamp_uncertainty_seconds": 0.5,
+            "evidence": {
+              "aligned_frames": 12,
+              "query_frames": 12,
+              "coverage": 1.0,
+              "mean_hash_distance": 1.08
+            },
+            "ranking_score": 0.9830729166666666,
+            "attribution": "indexed_reference"
+          }
+        ],
+        "reason": "Consecutive visual fingerprints align to an indexed recording; original ownership is unverified."
+      }
+    },
+    {
+      "case": "negative",
+      "classification": "no_match",
+      "expected_match": false,
+      "correct_decision": true,
+      "timestamp_error_seconds": null,
+      "latency_seconds": 0.18,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    }
+  ]
+}
