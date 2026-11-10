@@ -1,6 +1,3 @@
-import importlib.util
-from pathlib import Path
-
 import pytest
 from fastapi.testclient import TestClient
 
@@ -8,18 +5,6 @@ from frametrace.app import app
 from frametrace.config import settings
 from frametrace.db import Reference, Session
 from frametrace.media import InvalidMedia, extract
-
-
-@pytest.fixture(scope="module")
-def media(tmp_path_factory):
-    folder = tmp_path_factory.mktemp("footage")
-    spec = importlib.util.spec_from_file_location(
-        "fixtures", Path(__file__).parents[3] / "scripts/make_fixtures.py"
-    )
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    module.fixtures(folder)
-    return folder
 
 
 def test_upload_real_video_match_isolation_revocation_and_delete(media):
@@ -108,7 +93,7 @@ def test_duration_limits(media):
         extract(media / "reference.mp4", 5)
 
 
-def test_queue_failure_cleans_up_and_marks_failed(monkeypatch):
+def test_queue_failure_retains_durable_job(monkeypatch):
     from frametrace.tasks import recognize
 
     def unavailable(*args, **kwargs):
@@ -123,7 +108,16 @@ def test_queue_failure_cleans_up_and_marks_failed(monkeypatch):
                 "/v1/recognitions",
                 files={"file": ("video.mp4", b"\x00\x00\x00\x18ftyp" + b"x" * 30)},
             )
-            assert response.status_code == 503
-            assert not list((settings.data_dir / "queries").glob("*.mp4"))
+            assert response.status_code == 202
+            job_id = response.json()["id"]
+            path = settings.data_dir / "queries" / f"{job_id}.mp4"
+            assert path.exists()
+            from frametrace.db import Job
+
+            with Session() as db:
+                assert db.get(Job, job_id).status == "queued"
+            # Recovery retains media; actual malformed decode is still terminal.
+            recognize.run(job_id)
+            assert not path.exists()
     finally:
         settings.execution = old

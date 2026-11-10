@@ -22,9 +22,13 @@
 - [ ] Real-world authorized catalog and untouched evaluation holdout
 - [ ] Scene segmentation, robust cropped/vertical/watermarked/speed-edited retrieval
 - [ ] Audio fingerprints, transcripts, OCR, embeddings and vector search
-- [ ] Supabase sessions/OAuth/accounts, private history/favorites and account deletion
-- [ ] R2 private objects and signed upload/download, durable job recovery/idempotency
-- [ ] Admission/rate limits, per-job decoder sandbox, retention scheduler and production metrics
+- [x] Supabase JWT validation, private account history/favorites and native email/password UI
+- [ ] Hosted account validation, OAuth, recovery deep links and identity/account deletion
+- [x] Durable dispatch, fenced worker recovery, bounded retries and submission idempotency
+- [x] Bounded pre-parser request spooling, per-process upload admission and retention scheduler
+- [x] R2-compatible private query object adapter, integrity checks and deletion retry outbox
+- [ ] Hosted R2 validation, lifecycle setup, direct signed upload/download and reference storage
+- [ ] Distributed user/tenant rate limits, per-job decoder sandbox and production metrics
 - [ ] Restricted admin console, audit logs, feedback and catalog removal workflows
 - [ ] Push notifications, analytics, onboarding and full settings/profile flows
 - [ ] Accessibility/device QA, licensed branding assets, privacy review and store release
@@ -37,3 +41,7 @@ paid APIs have been provisioned and no production system was changed.
 
 The current npm audit also reports five moderate transitive build-tooling advisories;
 no high or critical production-tree findings were reported in this run.
+
+Latest reliability evidence and migration details: docs/PHASE_2_RELIABILITY.md.
+
+Account/storage implementation and hosted prerequisites: docs/PHASE_3_ACCOUNTS_STORAGE.md.

@@ -24,7 +24,7 @@ def main():
     args = parser.parse_args()
     initialize()
     if args.command == "cleanup":
-        from .app import cleanup
+        from .lifecycle import cleanup
 
         cleanup()
         return

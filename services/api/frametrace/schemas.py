@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal
 
 from pydantic import BaseModel
@@ -15,7 +16,7 @@ Stage = Literal[
 class AcceptedJob(BaseModel):
     id: str
     access_token: str
-    status: Literal["queued"]
+    status: Stage
 
 
 class Evidence(BaseModel):
@@ -49,3 +50,27 @@ class RecognitionJob(BaseModel):
     status: Stage
     result: RecognitionResult | None
     error: str | None
+
+
+class HistoryItem(RecognitionJob):
+    saved: bool
+    created_at: datetime
+
+
+class HistoryPage(BaseModel):
+    items: list[HistoryItem]
+    next_offset: int | None
+
+
+class FavoriteResult(BaseModel):
+    id: str
+    saved: bool
+
+
+class ClaimedJob(BaseModel):
+    id: str
+
+
+class ClearedHistory(BaseModel):
+    deleted: int
+    may_have_more: bool

@@ -10,8 +10,16 @@ anyio==4.16.0
     # via starlette
 billiard==4.3.2
     # via celery
+boto3==1.43.127
+    # via frametrace-api (services/api/pyproject.toml)
+botocore==1.43.127
+    # via
+    #   boto3
+    #   s3transfer
 celery==5.7.0
     # via frametrace-api (services/api/pyproject.toml)
+cffi==2.1.1
+    # via cryptography
 click==8.5.1
     # via
     #   celery
@@ -25,12 +33,18 @@ click-plugins==1.1.1.2
     # via celery
 click-repl==0.4.1
     # via celery
+cryptography==50.0.2
+    # via pyjwt
 fastapi==0.162.2
     # via frametrace-api (services/api/pyproject.toml)
 h11==0.16.0
     # via uvicorn
 idna==3.20
     # via anyio
+jmespath==1.1.0
+    # via
+    #   boto3
+    #   botocore
 kombu==5.7.0
     # via celery
 numpy==2.5.4
@@ -49,6 +63,8 @@ psycopg==3.3.8
     # via frametrace-api (services/api/pyproject.toml)
 psycopg-binary==3.3.8
     # via psycopg
+pycparser==3.12
+    # via cffi
 pydantic==2.14.3
     # via
     #   fastapi
@@ -57,14 +73,20 @@ pydantic-core==2.50.4
     # via pydantic
 pydantic-settings==2.16.2
     # via frametrace-api (services/api/pyproject.toml)
+pyjwt==2.15.1
+    # via frametrace-api (services/api/pyproject.toml)
 python-dateutil==2.9.0.post0
-    # via celery
+    # via
+    #   botocore
+    #   celery
 python-dotenv==1.2.4
     # via pydantic-settings
 python-multipart==0.0.33
     # via frametrace-api (services/api/pyproject.toml)
 redis==8.1.0
     # via kombu
+s3transfer==0.19.3
+    # via boto3
 six==1.17.0
     # via python-dateutil
 sqlalchemy==2.1.8
@@ -91,6 +113,8 @@ typing-inspection==0.4.5
     #   pydantic-settings
 tzlocal==5.4.5
     # via celery
+urllib3==2.8.0
+    # via botocore
 uvicorn==0.54.0
     # via frametrace-api (services/api/pyproject.toml)
 vine==5.1.0

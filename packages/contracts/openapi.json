@@ -22,19 +22,316 @@
         }
       }
     },
+    "/v1/history": {
+      "get": {
+        "summary": "History",
+        "operationId": "history_v1_history_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 10000,
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "saved_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Saved Only"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Clear History",
+        "operationId": "clear_history_v1_history_delete",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearedHistory"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/history/{job_id}": {
+      "patch": {
+        "summary": "Favorite",
+        "operationId": "favorite_v1_history__job_id__patch",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Favorite"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FavoriteResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/recognitions/{job_id}/claim": {
+      "post": {
+        "summary": "Claim Guest",
+        "operationId": "claim_guest_v1_recognitions__job_id__claim_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-job-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Job-Token"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClaimedJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/recognitions": {
       "post": {
         "summary": "Create Recognition",
         "operationId": "create_recognition_v1_recognitions_post",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "name": "x-submission-token",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 43,
+                  "maxLength": 128,
+                  "pattern": "^[A-Za-z0-9_-]+$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Submission-Token"
+            }
+          }
+        ],
         "requestBody": {
+          "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/Body_create_recognition_v1_recognitions_post"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "202": {
@@ -176,7 +473,14 @@
           },
           "status": {
             "type": "string",
-            "const": "queued",
+            "enum": [
+              "queued",
+              "extracting_features",
+              "searching_catalog",
+              "verifying_candidates",
+              "completed",
+              "failed"
+            ],
             "title": "Status"
           }
         },
@@ -262,6 +566,37 @@
         ],
         "title": "Candidate"
       },
+      "ClaimedJob": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "ClaimedJob"
+      },
+      "ClearedHistory": {
+        "properties": {
+          "deleted": {
+            "type": "integer",
+            "title": "Deleted"
+          },
+          "may_have_more": {
+            "type": "boolean",
+            "title": "May Have More"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deleted",
+          "may_have_more"
+        ],
+        "title": "ClearedHistory"
+      },
       "Evidence": {
         "properties": {
           "aligned_frames": {
@@ -290,6 +625,37 @@
         ],
         "title": "Evidence"
       },
+      "Favorite": {
+        "properties": {
+          "saved": {
+            "type": "boolean",
+            "title": "Saved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "saved"
+        ],
+        "title": "Favorite"
+      },
+      "FavoriteResult": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "saved": {
+            "type": "boolean",
+            "title": "Saved"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "saved"
+        ],
+        "title": "FavoriteResult"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -302,6 +668,94 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "HistoryItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "extracting_features",
+              "searching_catalog",
+              "verifying_candidates",
+              "completed",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecognitionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "saved": {
+            "type": "boolean",
+            "title": "Saved"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "result",
+          "error",
+          "saved",
+          "created_at"
+        ],
+        "title": "HistoryItem"
+      },
+      "HistoryPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/HistoryItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_offset": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Offset"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_offset"
+        ],
+        "title": "HistoryPage"
       },
       "RecognitionJob": {
         "properties": {

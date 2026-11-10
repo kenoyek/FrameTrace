@@ -29,15 +29,12 @@ def main():
         try:
             dsn = LOCAL.rsplit("/", 1)[0] + "/" + database
             with psycopg.connect(dsn, autocommit=True) as connection:
-                connection.execute(
-                    Path(
-                        "supabase/migrations/202611090001_reference_catalog.sql"
-                    ).read_text()
-                )
+                for migration in sorted(Path("supabase/migrations").glob("*.sql")):
+                    connection.execute(migration.read_text())
                 rows = connection.execute(
-                    "select relname, relrowsecurity from pg_class where relname in ('reference_media', 'recognition_jobs', 'recognition_matches')"
+                    "select relname, relrowsecurity from pg_class where relname in ('reference_media', 'recognition_jobs', 'recognition_matches', 'recognition_execution', 'recognition_accounts', 'query_objects')"
                 ).fetchall()
-                assert len(rows) == 3 and all(enabled for _, enabled in rows), rows
+                assert len(rows) == 6 and all(enabled for _, enabled in rows), rows
                 for role in ["anon", "authenticated"]:
                     connection.execute(
                         sql.SQL("set role {}").format(sql.Identifier(role))
@@ -46,6 +43,9 @@ def main():
                         "reference_media",
                         "recognition_jobs",
                         "recognition_matches",
+                        "recognition_execution",
+                        "recognition_accounts",
+                        "query_objects",
                     ]:
                         try:
                             connection.execute(
@@ -59,7 +59,7 @@ def main():
                             raise AssertionError(f"{role} could read {table}")
                     connection.execute("reset role")
                 print(
-                    "Initial migration applied; RLS enabled on 3 tables; both client roles denied direct reads."
+                    "Migrations applied; RLS enabled on 6 tables; both client roles denied direct reads."
                 )
         finally:
             admin.execute(sql.SQL("drop database {}").format(sql.Identifier(database)))

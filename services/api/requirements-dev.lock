@@ -6,24 +6,53 @@ annotated-doc==0.0.5
     # via fastapi
 annotated-types==0.8.0
     # via pydantic
+antlr4-python3-runtime==4.13.2
+    # via moto
 anyio==4.16.0
     # via
     #   httpx
     #   starlette
+attrs==26.1.0
+    # via
+    #   jsonschema
+    #   jsonschema-path
+    #   referencing
+aws-xray-sdk==2.16.0
+    # via moto
 billiard==4.3.2
     # via celery
+blinker==1.9.0
+    # via flask
+boto3==1.43.127
+    # via
+    #   frametrace-api (services/api/pyproject.toml)
+    #   moto
+botocore==1.43.127
+    # via
+    #   aws-xray-sdk
+    #   boto3
+    #   moto
+    #   s3transfer
 celery==5.7.0
     # via frametrace-api (services/api/pyproject.toml)
 certifi==2026.10.23
     # via
     #   httpcore
     #   httpx
+    #   requests
+cffi==2.1.1
+    # via cryptography
+cfn-lint==1.60.0
+    # via moto
+charset-normalizer==3.5.2
+    # via requests
 click==8.5.1
     # via
     #   celery
     #   click-didyoumean
     #   click-plugins
     #   click-repl
+    #   flask
     #   uvicorn
 click-didyoumean==0.3.1
     # via celery
@@ -31,8 +60,23 @@ click-plugins==1.1.1.2
     # via celery
 click-repl==0.4.1
     # via celery
+cryptography==50.0.2
+    # via
+    #   joserfc
+    #   moto
+    #   pyjwt
+docker==7.2.0
+    # via moto
 fastapi==0.162.2
     # via frametrace-api (services/api/pyproject.toml)
+flask==3.1.3
+    # via
+    #   flask-cors
+    #   moto
+flask-cors==6.0.5
+    # via moto
+graphql-core==3.3.2
+    # via moto
 h11==0.16.0
     # via
     #   httpcore
@@ -45,14 +89,58 @@ idna==3.20
     # via
     #   anyio
     #   httpx
+    #   requests
 iniconfig==2.3.1
     # via pytest
+itsdangerous==2.2.0
+    # via flask
+jinja2==3.1.6
+    # via flask
+jmespath==1.1.0
+    # via
+    #   boto3
+    #   botocore
+joserfc==1.8.0
+    # via moto
+jsonpatch==1.45
+    # via cfn-lint
+jsonpath-ng==1.16.0
+    # via moto
+jsonpointer==3.10
+    # via jsonpatch
+jsonschema==4.26.0
+    # via
+    #   openapi-schema-validator
+    #   openapi-spec-validator
+jsonschema-path==0.5.0
+    # via openapi-spec-validator
+jsonschema-specifications==2025.9.1
+    # via
+    #   jsonschema
+    #   openapi-schema-validator
 kombu==5.7.0
     # via celery
+lazy-object-proxy==1.13.0
+    # via openapi-spec-validator
+markupsafe==3.0.4
+    # via
+    #   flask
+    #   jinja2
+    #   werkzeug
+moto==5.2.5
+    # via frametrace-api (services/api/pyproject.toml)
+mpmath==1.3.0
+    # via sympy
+networkx==3.7
+    # via cfn-lint
 numpy==2.5.4
     # via
     #   frametrace-api (services/api/pyproject.toml)
     #   opencv-python-headless
+openapi-schema-validator==0.9.0
+    # via openapi-spec-validator
+openapi-spec-validator==0.9.0
+    # via moto
 opencv-python-headless==4.14.0.94
     # via frametrace-api (services/api/pyproject.toml)
 opentelemetry-api==1.45.2
@@ -61,6 +149,8 @@ packaging==26.3
     # via
     #   kombu
     #   pytest
+pathable==0.6.0
+    # via jsonschema-path
 pluggy==1.7.0
     # via pytest
 prompt-toolkit==3.0.53
@@ -69,37 +159,86 @@ psycopg==3.3.8
     # via frametrace-api (services/api/pyproject.toml)
 psycopg-binary==3.3.8
     # via psycopg
+py-partiql-parser==0.6.3
+    # via moto
+pycparser==3.12
+    # via cffi
 pydantic==2.14.3
     # via
     #   fastapi
+    #   openapi-schema-validator
+    #   openapi-spec-validator
     #   pydantic-settings
 pydantic-core==2.50.4
     # via pydantic
 pydantic-settings==2.16.2
-    # via frametrace-api (services/api/pyproject.toml)
+    # via
+    #   frametrace-api (services/api/pyproject.toml)
+    #   openapi-schema-validator
+    #   openapi-spec-validator
 pygments==2.21.0
     # via pytest
+pyjwt==2.15.1
+    # via frametrace-api (services/api/pyproject.toml)
+pyparsing==3.3.3
+    # via moto
 pytest==8.4.2
     # via frametrace-api (services/api/pyproject.toml)
 python-dateutil==2.9.0.post0
-    # via celery
+    # via
+    #   botocore
+    #   celery
 python-dotenv==1.2.4
     # via pydantic-settings
 python-multipart==0.0.33
     # via frametrace-api (services/api/pyproject.toml)
+pyyaml==6.0.3
+    # via
+    #   cfn-lint
+    #   jsonschema-path
+    #   moto
+    #   responses
 redis==8.1.0
     # via kombu
+referencing==0.37.0
+    # via
+    #   jsonschema
+    #   jsonschema-path
+    #   jsonschema-specifications
+    #   openapi-schema-validator
+regex==2026.11.9
+    # via cfn-lint
+requests==2.34.2
+    # via
+    #   docker
+    #   moto
+    #   responses
+responses==0.26.3
+    # via moto
+rfc3339-validator==0.1.4
+    # via openapi-schema-validator
+rpds-py==2026.9.1
+    # via
+    #   jsonschema
+    #   referencing
 ruff==0.17.4
     # via frametrace-api (services/api/pyproject.toml)
+s3transfer==0.19.3
+    # via boto3
 six==1.17.0
-    # via python-dateutil
+    # via
+    #   python-dateutil
+    #   rfc3339-validator
 sqlalchemy==2.1.8
     # via frametrace-api (services/api/pyproject.toml)
 starlette==1.10.0
     # via fastapi
+sympy==1.14.0
+    # via cfn-lint
 typing-extensions==4.16.0
     # via
     #   anyio
+    #   cfn-lint
     #   click-repl
     #   fastapi
     #   opentelemetry-api
@@ -107,6 +246,7 @@ typing-extensions==4.16.0
     #   pydantic
     #   pydantic-core
     #   pydantic-settings
+    #   referencing
     #   sqlalchemy
     #   starlette
     #   typing-inspection
@@ -117,6 +257,12 @@ typing-inspection==0.4.5
     #   pydantic-settings
 tzlocal==5.4.5
     # via celery
+urllib3==2.8.0
+    # via
+    #   botocore
+    #   docker
+    #   requests
+    #   responses
 uvicorn==0.54.0
     # via frametrace-api (services/api/pyproject.toml)
 vine==5.1.0
@@ -126,3 +272,12 @@ vine==5.1.0
     #   kombu
 wcwidth==0.9.4
     # via prompt-toolkit
+werkzeug==3.1.9
+    # via
+    #   flask
+    #   flask-cors
+    #   moto
+wrapt==2.5.2
+    # via aws-xray-sdk
+xmltodict==1.0.4
+    # via moto

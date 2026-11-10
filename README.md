@@ -11,8 +11,15 @@ frames, dHash fingerprints, temporal sequence alignment, ambiguity/no-match hand
 FastAPI upload/status/deletion, Redis/Celery workers, PostgreSQL persistence, a native
 Expo gallery/preview/upload/result flow, and deterministic media integration tests.
 
+The reliability phase adds durable dispatch/recovery, worker leases, idempotent mobile
+retries, request limits and scheduled cleanup. See [the phase report](docs/PHASE_2_RELIABILITY.md).
+
 Start with [DEVELOPMENT.md](DEVELOPMENT.md). See [the implementation plan](docs/IMPLEMENTATION_PLAN.md),
 [status and limitations](KNOWN_LIMITATIONS.md), and the [original specification](docs/PRODUCT_SPEC.md).
+
+The account/storage phase adds JWT-owned history, favorites, native account screens and
+R2-compatible private query storage. Hosted configuration is still required; see
+[the account/storage report](docs/PHASE_3_ACCOUNTS_STORAGE.md).
 
 ## Quick local run
 

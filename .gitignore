@@ -6,6 +6,7 @@ node_modules/
 .expo/
 dist/
 .env
+.env.*
 !.env.example
 var/
 *.egg-info/

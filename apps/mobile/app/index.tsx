@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -6,7 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useQuery } from '@tanstack/react-query';
-import { Credential, deleteJob, fetchJob, remember, restore, stages, upload } from '../src/api';
+import { Credential, deleteJob, fetchJob, restore, restorePending, stages, upload } from '../src/api';
 import { palette, tokens } from '../src/theme';
 
 function Preview({ uri }: { uri: string }) {
@@ -24,7 +25,18 @@ export default function Home() {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  useEffect(() => { restore().then(setCredential).catch(() => setError('Could not restore the last recognition.')).finally(() => setRestoring(false)); }, []);
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    Promise.all([restore(), restorePending()]).then(([access, pending]) => {
+      if (!active) return;
+      setCredential(access);
+      if (pending) {
+        setSelected({ uri: pending.uri, width: 0, height: 0, type: 'video', fileName: pending.name, mimeType: pending.mime });
+        setError('An upload was interrupted. Tap Identify to retry with the same submission. If the cached video is unavailable, choose it again.');
+      }
+    }).catch(() => { if (active) setError('Could not restore the last recognition.'); }).finally(() => { if (active) setRestoring(false); });
+    return () => { active = false; };
+  }, []));
   const job = useQuery({
     queryKey: ['recognition', credential?.id], queryFn: () => fetchJob(credential!),
     enabled: !!credential,
@@ -57,7 +69,6 @@ export default function Home() {
     try {
       const access = await upload(selected.uri, selected.fileName ?? 'clip.mp4', selected.mimeType ?? 'video/mp4', setProgress);
       setCredential(access); setSelected(null);
-      try { await remember(access); } catch { setError("Search started, but secure storage failed. Keep this screen open to retrieve the result."); }
     } catch (error) { setError(error instanceof Error ? error.message : 'Upload failed. Please retry.'); }
     finally { setUploading(false); }
   }
@@ -70,13 +81,13 @@ export default function Home() {
     <StatusBar style={color === palette.dark ? 'light' : 'dark'} />
     <ScrollView contentContainerStyle={styles.scroll}>
       <View style={styles.header}><View style={[styles.mark, { borderColor: color.accent }]}><Text style={{ color: color.accent, fontSize: 24 }}>⌕</Text></View>
-        <Text style={[styles.brand, textStyle]}>FrameTrace</Text><View style={{ flex: 1 }} /><Text style={{ color: color.muted }}>EARLY ACCESS</Text></View>
+        <Text style={[styles.brand, textStyle]}>FrameTrace</Text><View style={{ flex: 1 }} /><Pressable accessibilityRole="button" onPress={() => router.push('/account')} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: color.accent }}>Account & history</Text></Pressable></View>
       <Text style={[styles.eyebrow, { color: color.accent }]}>EVERY CLIP HAS A STORY</Text>
       <Text accessibilityRole="header" style={[styles.headline, textStyle]}>What video is{ '\n' }this from?</Text>
       <Text style={[styles.subtitle, { color: color.muted }]}>Upload a clip and discover its source.</Text>
       <View style={[styles.panel, { backgroundColor: color.surface, borderColor: color.border }]}>
         <Text style={[styles.section, textStyle]}>{selected ? 'Your clip, ready to trace' : 'See a clip. Find the original.'}</Text>
-        {selected ? <><Preview uri={selected.uri} /><Text style={{ color: color.muted }}>{selected.fileName ?? 'Selected video'} · {((selected.duration ?? 0) / 1000).toFixed(1)} seconds</Text>
+        {selected ? <><Preview uri={selected.uri} /><Text style={{ color: color.muted }}>{selected.fileName ?? 'Selected video'} · {selected.duration == null ? 'Duration checked on upload' : `${(selected.duration / 1000).toFixed(1)} seconds`}</Text>
           <Button title={uploading ? progress === null ? 'Uploading…' : `Uploading ${Math.round(progress * 100)}%` : 'Identify this Video'} onPress={identify} disabled={uploading || working} />
           <Button title="Choose a different clip" secondary onPress={choose} disabled={uploading} /></>
           : <><Text style={[styles.body, { color: color.muted }]}>Choose a short video from your gallery. We’ll look for matching moments in our reference catalog.</Text>

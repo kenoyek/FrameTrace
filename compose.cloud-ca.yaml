@@ -1,0 +1,17 @@
+# Optional override for runtime HTTPS through a managed TLS-inspecting proxy.
+# Use the complete public system CA bundle; never disable verification.
+services:
+  api:
+    environment: &ca_environment
+      SSL_CERT_FILE: /run/frametrace/ca-bundle.pem
+      AWS_CA_BUNDLE: /run/frametrace/ca-bundle.pem
+    volumes:
+      - ${FRAMETRACE_CA_BUNDLE_FILE:?Set the public CA bundle path}:/run/frametrace/ca-bundle.pem:ro
+  worker:
+    environment: *ca_environment
+    volumes:
+      - ${FRAMETRACE_CA_BUNDLE_FILE:?Set the public CA bundle path}:/run/frametrace/ca-bundle.pem:ro
+  scheduler:
+    environment: *ca_environment
+    volumes:
+      - ${FRAMETRACE_CA_BUNDLE_FILE:?Set the public CA bundle path}:/run/frametrace/ca-bundle.pem:ro

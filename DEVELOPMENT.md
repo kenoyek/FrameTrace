@@ -16,7 +16,7 @@ the default home caches are read-only. Keep TLS and signature verification enabl
 ```sh
 docker compose build api
 docker compose up -d --wait postgres redis
-docker compose up -d api worker
+docker compose up -d --wait api worker scheduler
 ```
 
 On this cloud proxy, build with the system CA supplied only as a BuildKit secret:
@@ -24,7 +24,7 @@ On this cloud proxy, build with the system CA supplied only as a BuildKit secret
 ```sh
 docker build --secret id=proxy_ca,src=/etc/ssl/certs/ca-certificates.crt \
   -f infrastructure/Dockerfile -t frametrace-api:local .
-docker compose up -d api worker
+docker compose up -d --wait api worker scheduler
 ```
 
 The Dockerfile runs as an unprivileged user. Services bind to loopback by default.
@@ -48,9 +48,11 @@ Only submit media you have permission to process. No user query enters the refer
 
 For authorized media, pass an independently checked HTTPS `--source-url` if available.
 Revoke with `python -m frametrace.cli revoke ID`. Revocation invalidates old result candidates.
-Run `python -m frametrace.cli cleanup` periodically (at least hourly in deployment) to expire
-job metadata and abandoned raw clips after the configurable default 24 hours. Successful
-and failed workers delete their query immediately. Automatic scheduling is not yet installed.
+Compose includes one Celery Beat scheduler: it dispatches/reconciles jobs every 15 seconds
+and enqueues cleanup hourly. The configurable retention default is 24 hours; cleanup is
+batched (1000 records per sweep). `python -m frametrace.cli cleanup` also runs it manually.
+Successful and permanently failed workers delete clips immediately; retriable failures
+retain clips. Never run multiple Beat processes against the same schedule file.
 
 ## Native mobile development
 
@@ -87,5 +89,56 @@ are placeholders pending ownership and branding checks. No store publication is 
 ## Fast backend-only iteration
 
 `FRAMETRACE_EXECUTION=local .venv/bin/uvicorn frametrace.app:app` uses SQLite and in-process
-background work. It is not durable under restarts. Default execution is Celery; forgetting
-to start Redis and a worker will leave jobs queued or fail submission. See TESTING.md.
+background work. It has no automatic recovery scheduler. Default execution is Celery: run
+Redis, worker and scheduler together. The database/outbox retains accepted jobs during a
+broker outage and recovers them after restoration. Local disk/database persistence is
+required; this is not multi-region disaster recovery. See TESTING.md.
+
+## Reliability checks
+
+The API accepts optional `X-Submission-Token`: a client-generated, secret random token
+(43–128 URL-safe characters). It is also the job access capability; never log it. The
+mobile app uses Expo Crypto and persists it in SecureStore before sending. Retrying the
+same bytes with that token returns the existing ID and current status. Different bytes
+return 409. Idempotency ends when the job is deleted/expired. Legacy tokenless callers
+continue to work, but cannot deduplicate a response-lost initial submission.
+
+The middleware caps total request bytes at the file limit plus 128 KiB multipart overhead,
+spools to a private bounded temporary file before multipart parsing, and admits four
+concurrent uploads per API process. Exceeding the size returns 413; admission returns 429
+with Retry-After. These are not distributed per-user rate limits.
+
+Worker claims use an atomic DB lease, owner fencing and a three-attempt budget. A lease
+lasts at least 120s, longer than the 90s Celery task hard limit. Stale/duplicate deliveries
+cannot commit results or delete another owner's file. Expired leases and unpublished
+accepted jobs are redispatched with a 30s publication cooldown. API/worker hosts need
+synchronized clocks. Local in-process execution does not have Celery's hard time limit.
+
+For a local development outage exercise only:
+
+```sh
+.venv/bin/python scripts/smoke_recovery.py --exercise-outage
+```
+
+This briefly stops this project's scheduler, workers and Redis, submits/retries a real
+fixture, restores services in `finally`, and verifies eventual recognition. Do not run
+against production or while another developer depends on those local processes.
+
+## Optional accounts and private object storage
+
+Read docs/PHASE_3_ACCOUNTS_STORAGE.md before configuring external services. Defaults remain
+guest/local storage. Server settings are documented in services/api/.env.example; mobile
+public settings are in apps/mobile/.env.example. Never add credentials to either example.
+Uvicorn can load an ignored server file with `--env-file services/api/.env`; Compose passes
+the documented FRAMETRACE_* and server AWS credential variables from the shell/root .env.
+Keep server signing credentials and DB passwords out of EXPO_PUBLIC_* variables.
+
+For runtime CA trust in this managed cloud only:
+
+```sh
+FRAMETRACE_CA_BUNDLE_FILE=/etc/ssl/certs/ca-certificates.crt \
+  docker compose -f compose.yaml -f compose.cloud-ca.yaml up -d --wait api worker scheduler
+```
+
+This mounts a public trust bundle; it does not enable destinations or supply credentials.
+Use normal Compose when no custom runtime trust is needed. No cloud settings were changed.

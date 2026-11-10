@@ -14,6 +14,8 @@ services:
       retries: 20
   redis:
     image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["redis:/data"]
     ports: ["127.0.0.1:6379:6379"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -32,6 +34,12 @@ services:
     environment: &api_environment
       FRAMETRACE_DATABASE_URL: postgresql+psycopg://frametrace:local-development-only@postgres:5432/frametrace
       FRAMETRACE_BROKER_URL: redis://redis:6379/0
+      FRAMETRACE_SUPABASE_URL: ${FRAMETRACE_SUPABASE_URL:-}
+      FRAMETRACE_STORAGE_BACKEND: ${FRAMETRACE_STORAGE_BACKEND:-local}
+      FRAMETRACE_S3_ENDPOINT_URL: ${FRAMETRACE_S3_ENDPOINT_URL:-}
+      FRAMETRACE_S3_BUCKET: ${FRAMETRACE_S3_BUCKET:-}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
     ports: ["127.0.0.1:8000:8000"]
     volumes: ["media:/app/var"]
     depends_on:
@@ -48,6 +56,18 @@ services:
       api: {condition: service_healthy}
     init: true
     security_opt: ["no-new-privileges:true"]
+  scheduler:
+    image: frametrace-api:local
+    environment: *api_environment
+    command: ["celery", "-A", "frametrace.tasks.celery", "beat", "--schedule=/app/var/celerybeat-schedule", "--loglevel=INFO"]
+    volumes: ["media:/app/var"]
+    depends_on:
+      api: {condition: service_healthy}
+      redis: {condition: service_healthy}
+    init: true
+    security_opt: ["no-new-privileges:true"]
+
 volumes:
   postgres:
+  redis:
   media:
