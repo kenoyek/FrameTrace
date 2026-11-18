@@ -32,6 +32,19 @@ class Reference(Base):
     revoked: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
+class CatalogAudit(Base):
+    __tablename__ = "catalog_audit"
+    __table_args__ = (CheckConstraint("action in ('ingest', 'revoke')"),)
+    id: Mapped[str] = mapped_column(String, primary_key=True)
+    reference_id: Mapped[str] = mapped_column(String, index=True)
+    action: Mapped[str] = mapped_column(String)
+    actor: Mapped[str] = mapped_column(String(120))
+    reason: Mapped[str] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
+
+
 class Job(Base):
     __tablename__ = "recognition_jobs"
     id: Mapped[str] = mapped_column(String, primary_key=True)

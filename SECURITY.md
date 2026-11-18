@@ -57,3 +57,5 @@ no path/query tokens. Device cache expiration is checked on future app/extension
 not an always-running 24h device eraser. Real provider/termination/device tests remain open.
 
 Structured feedback is a bounded rating linked to a job, available only through job ownership checks. It is removed with deleted/expired recognition metadata; retained account history retains its rating. No free-text feedback or automatic training pipeline is implemented.
+
+Operator CLI audit labels are assertions, not authenticated identities. Audit records are transactional with CLI catalog changes but remain editable by trusted database credentials; direct SQL bypasses them. Feedback aggregates are for trusted operators and have no statistical privacy guarantee. No remote admin endpoint is exposed.

@@ -89,3 +89,5 @@ The Android Gradle build was attempted and stopped at the denied RN Maven destin
 see docs/PHASE_4_NATIVE_SHARING.md. This phase did not change backend recognition logic.
 
 Phase 8 adds six backend feedback ownership/upsert/cleanup tests (46 backend tests total) and two mobile feedback transport cases. See docs/PHASE_8_FEEDBACK.md for limits.
+
+Phase 9 adds nine operator CLI/transaction/reporting cases (55 backend tests total). Mobile code was unchanged; prior mobile results were not rerun. See docs/PHASE_9_OPERATOR_REVIEW.md.

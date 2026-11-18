@@ -57,3 +57,5 @@ First-run introduction and clip privacy guide: [phase 6](docs/PHASE_6_ONBOARDING
 Persisted app-wide appearance and Settings: [phase 7](docs/PHASE_7_SETTINGS.md). Device/accessibility acceptance remains pending.
 
 Optional private result feedback: [phase 8](docs/PHASE_8_FEEDBACK.md), including its additive database migration.
+
+Local catalog and feedback review commands with catalog change records: [phase 9](docs/PHASE_9_OPERATOR_REVIEW.md). Ingest/revoke now require an operator label; revoke also requires a reason.

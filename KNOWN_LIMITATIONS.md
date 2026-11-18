@@ -32,7 +32,8 @@
 - [ ] Hosted R2 validation, lifecycle setup, direct signed upload/download and reference storage
 - [ ] Distributed user/tenant rate limits, per-job decoder sandbox and production metrics
 - [x] Private structured result feedback with ownership checks and result-lifetime cleanup
-- [ ] Hosted feedback migration/device acceptance, restricted admin console, audit logs and catalog removal workflows
+- [x] Local CLI catalog listing, aggregate feedback review and transactional ingest/revoke audit records
+- [ ] Hosted migrations/roles, feedback device acceptance, remote admin console and catalog erasure workflows
 - [x] First-run introduction, versioned local preference and reusable clip privacy guide
 - [x] App-wide persisted appearance and Settings links to guide/account history
 - [ ] Onboarding/settings device and accessibility acceptance, push notifications, analytics and full profile flows
@@ -61,3 +62,5 @@ Introduction implementation and device acceptance: docs/PHASE_6_ONBOARDING.md.
 App-wide appearance implementation and remaining settings QA: docs/PHASE_7_SETTINGS.md.
 
 Structured feedback API, cleanup and migration scope: docs/PHASE_8_FEEDBACK.md.
+
+Local operator CLI review, audit scope and deployment limits: docs/PHASE_9_OPERATOR_REVIEW.md.
