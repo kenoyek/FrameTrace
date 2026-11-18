@@ -10,6 +10,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+from frametrace.fingerprints import INDEX_VERSION, VERSION
 from frametrace.media import extract
 from frametrace.recognition import match
 
@@ -76,6 +77,7 @@ def benchmark(folder):
                 "publisher": "FrameTrace",
                 "source_url": None,
                 "fingerprints": fingerprints,
+                "fingerprint_version": VERSION,
             }
         )
     rows = []
@@ -104,7 +106,8 @@ def benchmark(folder):
     return {
         "report_version": 2,
         "scope": "Original synthetic development fixtures, two-reference catalog; no independent holdout or real-world accuracy claim.",
-        "fingerprint_version": "dhash64-v1-fps2",
+        "fingerprint_version": VERSION,
+        "retrieval_implementation": INDEX_VERSION,
         "timestamp_tolerance_seconds": 0.5,
         "positive_cases": len(positives),
         "negative_cases": len(negatives),
@@ -124,7 +127,7 @@ def benchmark(folder):
         "p95_latency_seconds": float(
             np.percentile([r["latency_seconds"] for r in rows], 95)
         ),
-        "latency_scope": "Local decode, feature extraction and exhaustive matching; excludes reference indexing, network, queue and upload.",
+        "latency_scope": "Local decode, feature extraction, temporary per-reference index construction and matching; excludes reference decoding, network, queue and upload.",
         "runtime": {
             "opencv": cv2.__version__,
             "numpy": np.__version__,

@@ -41,7 +41,7 @@
 
 Cropped, mirrored, rotated, speed-edited and letterboxed synthetic cases currently fail matching. No numeric score is displayed as a
 probability. No original creator is inferred. Source links are optional operator assertions.
-The reference catalog is tiny, JSON-backed and scanned exhaustively. The service binds to
+The reference catalog is tiny and JSON-backed; every supported reference is searched using a temporary exact Hamming block index. The service binds to
 loopback because it is not hardened for public traffic. No external cloud resources or
 paid APIs have been provisioned and no production system was changed.
 
@@ -74,3 +74,5 @@ Android intent MIME lifetime fix and failure diagnostic artifacts: docs/PHASE_12
 In-app API health diagnostic: docs/PHASE_13_API_CONNECTION_CHECK.md. A responding probe does not establish worker or upload readiness; APK delivery and phone acceptance remain open.
 
 Corrected scoring and eight-edit/two-unknown synthetic diagnostics: docs/PHASE_14_RECOGNITION_EVALUATION.md. These are not product accuracy measurements.
+
+Exact fingerprint candidate indexing and unchanged ten-video results: docs/PHASE_15_FINGERPRINT_INDEX.md. No large-catalog throughput claim is made.

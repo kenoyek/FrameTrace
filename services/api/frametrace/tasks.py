@@ -6,6 +6,7 @@ from sqlalchemy import select
 
 from .config import settings
 from .db import Job, JobExecution, Match, Reference, Session
+from .fingerprints import VERSION
 from .lifecycle import claim, cleanup, dispatch_pending, fenced
 from .media import InvalidMedia, extract
 from .recognition import match
@@ -64,8 +65,13 @@ def recognize(job_id: str):
                     "publisher": r.publisher,
                     "source_url": r.source_url,
                     "fingerprints": r.fingerprints,
+                    "fingerprint_version": r.fingerprint_version,
                 }
-                for r in db.scalars(select(Reference).where(Reference.revoked.is_(False)))
+                for r in db.scalars(
+                    select(Reference).where(
+                        Reference.revoked.is_(False), Reference.fingerprint_version == VERSION
+                    )
+                )
             ]
             db.commit()
         with Session() as db:

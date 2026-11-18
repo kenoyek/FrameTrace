@@ -8,6 +8,7 @@ from sqlalchemy import select
 
 from .config import settings
 from .db import Reference, Session, initialize
+from .fingerprints import VERSION
 from .media import extract
 from .operations import audit_page, catalog_page, feedback_summary, record_catalog_event
 
@@ -122,6 +123,7 @@ def main():
                 source_url=args.source_url,
                 duration=duration,
                 fingerprints=fingerprints,
+                fingerprint_version=VERSION,
             )
         )
         record_catalog_event(db, digest, "ingest", args.actor, "Authorized catalog ingestion")

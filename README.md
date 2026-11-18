@@ -67,3 +67,5 @@ Android test APK build/download instructions: [phase 11](docs/PHASE_11_ANDROID_T
 Settings includes a no-upload API connection check: [phase 13](docs/PHASE_13_API_CONNECTION_CHECK.md).
 
 Expanded synthetic recognition diagnostics and corrected source/timestamp scoring: [phase 14](docs/PHASE_14_RECOGNITION_EVALUATION.md). Five edited-video cases still fail matching.
+
+Exact fingerprint candidate lookup with representation-version filtering: [phase 15](docs/PHASE_15_FINGERPRINT_INDEX.md). Recognition decisions remain unchanged on the ten-video development corpus.

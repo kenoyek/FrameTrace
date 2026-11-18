@@ -104,3 +104,5 @@ Phase 12: 32 mobile tests, TypeScript, Android-only and full native-project chec
 Phase 13: 38 mobile tests and TypeScript passed, including six API diagnostic transport cases. Both JavaScript bundles exported. Phone/API connectivity and native-build acceptance remain pending; see docs/PHASE_13_API_CONNECTION_CHECK.md.
 
 Phase 14: 66 backend tests passed, one PostgreSQL-only test skipped; real synthetic media generation/decoding and clean/unknown core gates passed. CI now exports its evaluation report.
+
+Phase 15: 75 backend tests passed, one PostgreSQL-only case skipped. The exact Hamming index matches exhaustive neighbors across 600 seeded variants; ten decoded-media result/evidence objects match the saved exhaustive baseline on identical file hashes. See docs/PHASE_15_FINGERPRINT_INDEX.md.

@@ -6,6 +6,8 @@ for a small controlled catalog; cropped/replaced scenes require later providers.
 
 from collections import defaultdict
 
+from .fingerprints import VERSION, FingerprintIndex, parse_hash
+
 
 def match(query: list[dict], references: list[dict]) -> dict:
     candidates = []
@@ -15,14 +17,18 @@ def match(query: list[dict], references: list[dict]) -> dict:
             "candidates": [],
             "reason": "Insufficient distinctive temporal evidence.",
         }
+    query_hashes = [parse_hash(q["hash"]) for q in query]
     for ref in references:
+        # Internal callers may omit the version for existing unit fixtures. Explicitly
+        # incompatible references must never be compared; workers also filter in SQL.
+        if ref.get("fingerprint_version", VERSION) != VERSION:
+            continue
         votes: dict[float, dict[int, tuple[int, float]]] = defaultdict(dict)
-        frames = ref["fingerprints"]
-        for qi, q in enumerate(query):
-            for r in frames:
-                distance = (int(q["hash"], 16) ^ int(r["hash"], 16)).bit_count()
+        index = FingerprintIndex(ref["fingerprints"])
+        for qi, (q, value) in enumerate(zip(query, query_hashes)):
+            for r, distance in index.neighbors(value):
                 offset = round((r["time"] - q["time"]) * 2) / 2
-                if distance <= 9 and offset >= 0:
+                if offset >= 0:
                     previous = votes[offset].get(qi)
                     if previous is None or distance < previous[0]:
                         votes[offset][qi] = (distance, r["time"])
