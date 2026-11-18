@@ -1,7 +1,8 @@
+import { useAppearance } from '../settings/AppearanceProvider';
 import { useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { palette, tokens } from '../theme';
+import { tokens } from '../theme';
 
 export function Introduction({ onContinue, onContinueWithoutSaving, storageError = false, review = false }: {
   onContinue: () => Promise<void>;
@@ -9,7 +10,7 @@ export function Introduction({ onContinue, onContinueWithoutSaving, storageError
   storageError?: boolean;
   review?: boolean;
 }) {
-  const color = palette[useColorScheme() === 'light' ? 'light' : 'dark'];
+  const { color } = useAppearance();
   const lock = useRef(false);
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);

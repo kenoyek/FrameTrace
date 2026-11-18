@@ -33,7 +33,8 @@
 - [ ] Distributed user/tenant rate limits, per-job decoder sandbox and production metrics
 - [ ] Restricted admin console, audit logs, feedback and catalog removal workflows
 - [x] First-run introduction, versioned local preference and reusable clip privacy guide
-- [ ] Onboarding device/accessibility acceptance, push notifications, analytics and full settings/profile flows
+- [x] App-wide persisted appearance and Settings links to guide/account history
+- [ ] Onboarding/settings device and accessibility acceptance, push notifications, analytics and full profile flows
 - [ ] Accessibility/device QA, licensed branding assets, privacy review and store release
 
 Cropped synthetic footage currently fails matching. No numeric score is displayed as a
@@ -55,3 +56,5 @@ Native intake source, checks and the repo.reactnative.dev build blocker: docs/PH
 Camera recording implementation and acceptance limits: docs/PHASE_5_RECORDING.md.
 
 Introduction implementation and device acceptance: docs/PHASE_6_ONBOARDING.md.
+
+App-wide appearance implementation and remaining settings QA: docs/PHASE_7_SETTINGS.md.

@@ -1,17 +1,17 @@
+import { useAppearance } from '../src/settings/AppearanceProvider';
 import { recordVideo, validateVideo } from '../src/media/capture';
 import { useSharedInbox } from '../src/sharing/useSharedInbox';
 import { sharedLinkExplanation } from '../src/sharing/policy';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import { useQuery } from '@tanstack/react-query';
 import { Credential, deleteJob, fetchJob, restore, restorePending, stages, upload, discardPendingSubmission } from '../src/api';
-import { palette, tokens } from '../src/theme';
+import { tokens } from '../src/theme';
 
 function Preview({ uri }: { uri: string }) {
   const player = useVideoPlayer(uri, player => { player.loop = false; });
@@ -19,9 +19,7 @@ function Preview({ uri }: { uri: string }) {
 }
 const timestamp = (value: number) => `${Math.floor(value / 60)}:${Math.floor(value % 60).toString().padStart(2, '0')}`;
 export default function Home() {
-  const system = useColorScheme();
-  const [appearance, setAppearance] = useState<'system' | 'dark' | 'light'>('system');
-  const color = palette[(appearance === 'system' ? system : appearance) === 'light' ? 'light' : 'dark'];
+  const { color } = useAppearance();
   const inbox = useSharedInbox();
   const [selectedShareId, setSelectedShareId] = useState<string | null>(null);
   const [selected, setSelected] = useState<ImagePicker.ImagePickerAsset | null>(null);
@@ -124,7 +122,6 @@ export default function Home() {
     catch (error) { setError(error instanceof Error ? error.message : 'Could not delete recognition.'); }
   }
   return <SafeAreaView style={{ flex: 1, backgroundColor: color.background }}>
-    <StatusBar style={color === palette.dark ? 'light' : 'dark'} />
     <ScrollView contentContainerStyle={styles.scroll}>
       <View style={styles.header}><View style={[styles.mark, { borderColor: color.accent }]}><Text style={{ color: color.accent, fontSize: 24 }}>⌕</Text></View>
         <Text style={[styles.brand, textStyle]}>FrameTrace</Text><View style={{ flex: 1 }} /><Pressable accessibilityRole="button" onPress={() => router.push('/account')} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: color.accent }}>Account & history</Text></Pressable></View>
@@ -176,7 +173,7 @@ export default function Home() {
       <Pressable accessibilityRole="button" onPress={() => router.push('/guide')} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: color.accent }}>How FrameTrace works & clip privacy</Text></Pressable>
       <View style={styles.footer}><Text style={[styles.section, textStyle]}>A match you can trust.</Text><Text style={[styles.body, { color: color.muted }]}>Searches use an authorized reference catalog. If there isn’t enough evidence, we’ll say so. Clips are deleted after processing.</Text>
         <Text style={[styles.caption, { color: color.muted }]}>Development build · Visual matching only · Review shared clips before uploading</Text>
-        <View style={styles.appearance}>{(['system', 'dark', 'light'] as const).map(mode => <Pressable key={mode} accessibilityRole="button" accessibilityState={{ selected: appearance === mode }} onPress={() => setAppearance(mode)} style={[styles.mode, { borderColor: appearance === mode ? color.accent : color.border }]}><Text style={{ color: color.text }}>{mode[0].toUpperCase() + mode.slice(1)}</Text></Pressable>)}</View>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/settings')} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: color.accent }}>Settings & appearance</Text></Pressable>
       </View>
     </ScrollView>
   </SafeAreaView>;
@@ -198,6 +195,4 @@ const styles = StyleSheet.create({
   video: { width: '100%', aspectRatio: 16 / 10, borderRadius: 12 },
   candidate: { borderTopWidth: 1, paddingTop: 18, gap: 10 },
   footer: { paddingTop: 12, gap: 14 },
-  appearance: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
-  mode: { borderWidth: 1, borderRadius: 12, minHeight: 44, paddingHorizontal: 16, justifyContent: 'center' },
 });

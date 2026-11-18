@@ -53,3 +53,5 @@ validation. No public consumer website is included. No service credentials are e
 System-camera recording with explicit preview/upload confirmation: [phase 5](docs/PHASE_5_RECORDING.md). Physical-device acceptance remains pending.
 
 First-run introduction and clip privacy guide: [phase 6](docs/PHASE_6_ONBOARDING.md). Device/accessibility acceptance remains pending.
+
+Persisted app-wide appearance and Settings: [phase 7](docs/PHASE_7_SETTINGS.md). Device/accessibility acceptance remains pending.

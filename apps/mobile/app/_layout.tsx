@@ -1,3 +1,4 @@
+import { AppearanceProvider, useAppearance } from '../src/settings/AppearanceProvider';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { Introduction } from '../src/onboarding/Introduction';
@@ -8,6 +9,10 @@ import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 const client = new QueryClient({ defaultOptions: { queries: { retry: 1 } } });
+function LoadingIntroduction() {
+  const { color } = useAppearance();
+  return <View style={{ flex: 1, justifyContent: 'center', backgroundColor: color.background }}><ActivityIndicator color={color.accent} accessibilityLabel="Loading introduction preference" /></View>;
+}
 export default function Layout() {
   const [introduced, setIntroduced] = useState<boolean | null>(null);
   const [preferenceError, setPreferenceError] = useState(false);
@@ -30,11 +35,11 @@ export default function Layout() {
     return () => { stop(); listener?.data.subscription.unsubscribe(); };
   }, [introduced]);
   return <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider>
-    <QueryClientProvider client={client}>{introduced === null
-      ? <View style={{ flex: 1, justifyContent: 'center' }}><ActivityIndicator accessibilityLabel="Loading introduction preference" /></View>
+    <AppearanceProvider><QueryClientProvider client={client}>{introduced === null
+      ? <LoadingIntroduction />
       : !introduced ? <Introduction storageError={preferenceError} onContinue={async () => {
         await rememberIntroduction(); setIntroduced(true);
       }} onContinueWithoutSaving={() => setIntroduced(true)} />
-      : <Stack screenOptions={{ headerShown: false }} />}</QueryClientProvider>
+      : <Stack screenOptions={{ headerShown: false }} />}</QueryClientProvider></AppearanceProvider>
   </SafeAreaProvider></GestureHandlerRootView>;
 }

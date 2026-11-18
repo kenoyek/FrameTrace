@@ -1,14 +1,14 @@
+import { useAppearance } from '../src/settings/AppearanceProvider';
 import { useEffect, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import type { Session } from '@supabase/supabase-js';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { authSession, supabase } from '../src/auth';
 import { claimLatest, clearHistory, deleteHistoryItem, history, saveResult, reopenAccountResult } from '../src/api';
-import { palette } from '../src/theme';
 export default function Account() {
-  const c = palette[useColorScheme() === 'light' ? 'light' : 'dark'];
+  const { color: c } = useAppearance();
   const [session, setSession] = useState<Session | null>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
