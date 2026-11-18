@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react';
+import { checkConnection, type ConnectionCheck } from '../src/connection';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -6,6 +8,21 @@ import { tokens } from '../src/theme';
 
 export default function Settings() {
   const { appearance, color, ready, saving, error, setAppearance } = useAppearance();
+  const [checking, setChecking] = useState(false);
+  const [connection, setConnection] = useState<ConnectionCheck | null>(null);
+  const request = useRef<AbortController | null>(null);
+  useEffect(() => () => { request.current?.abort(); request.current = null; }, []);
+  async function testConnection() {
+    if (request.current) return;
+    const controller = new AbortController(); request.current = controller;
+    setChecking(true); setConnection(null);
+    try {
+      const result = await checkConnection(controller.signal);
+      if (!controller.signal.aborted) setConnection(result);
+    } finally {
+      if (request.current === controller) { request.current = null; setChecking(false); }
+    }
+  }
   function Link({ title, action }: { title: string; action: () => void }) {
     return <Pressable accessibilityRole="button" onPress={action} style={[styles.link, { borderColor: color.border }]}><Text style={{ color: color.accent, fontSize: 16 }}>{title}</Text></Pressable>;
   }
@@ -21,6 +38,14 @@ export default function Settings() {
       </Pressable>)}
       {(!ready || saving) && <Text accessibilityLiveRegion="polite" style={{ color: color.muted }}>{ready ? 'Saving preference…' : 'Loading preference…'}</Text>}
       {error && <Text accessibilityRole="alert" style={[styles.body, { color: color.text }]}>{error}</Text>}
+    </View>
+    <View style={[styles.card, { borderColor: color.border }]}>
+      <Text accessibilityRole="header" style={[styles.heading, { color: color.text }]}>Test API connection</Text>
+      <Text style={[styles.body, { color: color.muted }]}>Check whether this build can reach its recognition API. This sends no clip or account token. The result is a snapshot; upload and worker testing are separate.</Text>
+      <Pressable accessibilityRole="button" accessibilityState={{ disabled: checking }} disabled={checking} onPress={() => { void testConnection(); }} style={[styles.link, { borderColor: color.border }]}>
+        <Text style={{ color: color.accent }}>{checking ? 'Checking…' : 'Check connection'}</Text>
+      </Pressable>
+      {connection && <Text accessibilityLiveRegion="polite" style={[styles.body, { color: color.text }]}>{connection.message}</Text>}
     </View>
     <Text accessibilityRole="header" style={[styles.heading, { color: color.text }]}>Your clips and discoveries</Text>
     <Link title="How FrameTrace works & clip privacy" action={() => router.push('/guide')} />

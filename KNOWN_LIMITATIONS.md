@@ -70,3 +70,5 @@ Local PostgreSQL evidence now covers all five migrations/eight tables and feedba
 Android test-APK workflow and verifier are configured; no successful native build/install is claimed. Current cloud AAR access is still denied. See docs/PHASE_11_ANDROID_TEST_APK.md.
 
 Android intent MIME lifetime fix and failure diagnostic artifacts: docs/PHASE_12_ANDROID_BUILD_REVIEW.md. Native compilation/device acceptance and APK delivery remain open.
+
+In-app API health diagnostic: docs/PHASE_13_API_CONNECTION_CHECK.md. A responding probe does not establish worker or upload readiness; APK delivery and phone acceptance remain open.

@@ -63,3 +63,5 @@ Local catalog and feedback review commands with catalog change records: [phase 9
 Local PostgreSQL migration and privacy-boundary evidence: [phase 10](docs/PHASE_10_POSTGRES_VALIDATION.md). Hosted rollout remains pending.
 
 Android test APK build/download instructions: [phase 11](docs/PHASE_11_ANDROID_TEST_APK.md). A successful verified artifact is required before phone testing; no APK has been produced here yet.
+
+Settings includes a no-upload API connection check: [phase 13](docs/PHASE_13_API_CONNECTION_CHECK.md).
