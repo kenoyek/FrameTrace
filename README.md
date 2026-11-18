@@ -61,3 +61,5 @@ Optional private result feedback: [phase 8](docs/PHASE_8_FEEDBACK.md), including
 Local catalog and feedback review commands with catalog change records: [phase 9](docs/PHASE_9_OPERATOR_REVIEW.md). Ingest/revoke now require an operator label; revoke also requires a reason.
 
 Local PostgreSQL migration and privacy-boundary evidence: [phase 10](docs/PHASE_10_POSTGRES_VALIDATION.md). Hosted rollout remains pending.
+
+Android test APK build/download instructions: [phase 11](docs/PHASE_11_ANDROID_TEST_APK.md). A successful verified artifact is required before phone testing; no APK has been produced here yet.

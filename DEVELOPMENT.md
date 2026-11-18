@@ -197,3 +197,5 @@ server DB credentials; do not publish these commands as an unauthenticated admin
 See docs/PHASE_9_OPERATOR_REVIEW.md for output fields and audit/aggregation limits.
 
 Local PostgreSQL validation now checks all five migrations/eight tables, client CRUD denial and RLS under a temporary read grant. The PostgreSQL runner includes feedback/operator and concurrent-feedback cases; see docs/PHASE_10_POSTGRES_VALIDATION.md. These checks require disposable local database creation, not hosted credentials.
+
+The Android helper now supports `--variant debug` (default, Metro) and `--variant internal-preview` (bundled release variant with development signing). APK verification/delivery instructions and API configuration are in docs/PHASE_11_ANDROID_TEST_APK.md. A GitHub Actions build is configured; no successful APK build is claimed yet.

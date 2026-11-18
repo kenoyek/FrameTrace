@@ -1,9 +1,10 @@
-"""Build the ARM64 development APK using an installed SDK and verified Gradle ZIP.
+"""Build an ARM64 development or bundled internal-preview APK using an installed SDK and verified Gradle ZIP.
 
 Run prebuild first. Proxy/CA adapters preserve inherited settings; no TLS bypass or
 production signing is used. Gradle dependencies/caches stay outside the checkout.
 """
 
+import argparse
 import os
 import pathlib
 import shlex
@@ -41,9 +42,26 @@ def find_jdk17():
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--variant", choices=["debug", "internal-preview"], default="debug"
+    )
+    args = parser.parse_args()
     android = ROOT / "apps/mobile/android"
     if not (android / "gradlew").is_file():
         raise SystemExit("Run Expo prebuild --no-install first (DEVELOPMENT.md).")
+    if args.variant == "internal-preview":
+        # Expo's generated release variant uses the development keystore for local builds.
+        # Refuse a signing change rather than accidentally using production credentials.
+        gradle = (android / "app/build.gradle").read_text()
+        if (
+            "release {" not in gradle
+            or "signingConfig signingConfigs.debug"
+            not in gradle.split("release {", 1)[1].split("packagingOptions", 1)[0]
+        ):
+            raise SystemExit(
+                "Internal preview must use the generated debug signing configuration."
+            )
     env = os.environ.copy()
     env["JAVA_HOME"] = str(find_jdk17())
     sdk = pathlib.Path(env.get("ANDROID_HOME", "/workspace/.cache/android-sdk"))
@@ -142,7 +160,7 @@ def main():
     subprocess.run(
         [
             str(android / "gradlew"),
-            ":app:assembleDebug",
+            ":app:assembleDebug" if args.variant == "debug" else ":app:assembleRelease",
             "--no-daemon",
             "--max-workers=2",
             "-PreactNativeArchitectures=arm64-v8a",

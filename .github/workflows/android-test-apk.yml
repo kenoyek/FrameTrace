@@ -1,0 +1,83 @@
+name: Android test APK
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: Internal preview runs without Metro; debug uses Metro
+        type: choice
+        options: [internal-preview, debug]
+        default: internal-preview
+      api_url:
+        description: Optional public HTTPS development API address (embedded in APK)
+        type: string
+        default: ''
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/android-test-apk.yml'
+      - 'apps/mobile/**'
+      - 'scripts/build_android.py'
+      - 'scripts/verify_android_apk.py'
+permissions:
+  contents: read
+concurrency:
+  group: android-test-apk-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      VARIANT: ${{ inputs.variant || 'internal-preview' }}
+      EXPO_PUBLIC_API_URL: ${{ inputs.api_url || vars.EXPO_PUBLIC_API_URL }}
+      EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
+      EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22', cache: npm, cache-dependency-path: apps/mobile/package-lock.json}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: android-actions/setup-android@v3
+      - name: Validate optional public API configuration
+        run: |
+          python - <<'PY'
+          import os
+          from urllib.parse import urlsplit
+          value = os.environ.get('EXPO_PUBLIC_API_URL', '')
+          if value:
+              parsed = urlsplit(value)
+              if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.query or parsed.fragment:
+                  raise SystemExit('Use a public HTTPS API base URL without credentials, query or fragment.')
+          PY
+      - name: Install native SDK tools
+        run: sdkmanager 'platforms;android-37.0' 'build-tools;37.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
+      - name: Validate mobile source and generate Android project
+        working-directory: apps/mobile
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          EXPO_OFFLINE=1 npx expo prebuild --platform android --no-install
+      - name: Build development-signed test APK
+        env:
+          FRAMETRACE_JDK17_HOME: ${{ env.JAVA_HOME }}
+          GRADLE_USER_HOME: ${{ runner.temp }}/frametrace-gradle
+          ANDROID_USER_HOME: ${{ runner.temp }}/frametrace-android
+        run: python scripts/build_android.py --variant "$VARIANT"
+      - name: Verify and stage APK
+        run: |
+          if [ "$VARIANT" = debug ]; then BUILD_TYPE=debug; else BUILD_TYPE=release; fi
+          mkdir -p artifacts
+          cp "apps/mobile/android/app/build/outputs/apk/$BUILD_TYPE/app-$BUILD_TYPE.apk" "artifacts/FrameTrace-$VARIANT-arm64.apk"
+          python scripts/verify_android_apk.py "artifacts/FrameTrace-$VARIANT-arm64.apk" --variant "$VARIANT" --build-tools "$ANDROID_HOME/build-tools/37.0.0" --output artifacts/build-info.json
+          sha256sum artifacts/*.apk > artifacts/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FrameTrace-${{ env.VARIANT }}-arm64-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14

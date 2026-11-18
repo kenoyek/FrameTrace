@@ -59,3 +59,7 @@ First-run and reusable guide acceptance (not executed on devices): see docs/PHAS
 App-wide appearance and Settings device/accessibility acceptance (not executed): see docs/PHASE_7_SETTINGS.md.
 
 Structured-feedback network/restart/account/accessibility acceptance (not executed on devices): see docs/PHASE_8_FEEDBACK.md.
+
+## Obtaining an Android test APK
+
+See docs/PHASE_11_ANDROID_TEST_APK.md and the Android test APK GitHub Actions workflow. A green run uploads a verified development-signed ARM64 artifact. No APK or physical-device acceptance is claimed yet. Internal preview embeds JavaScript; debug requires Metro.

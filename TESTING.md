@@ -93,3 +93,7 @@ Phase 8 adds six backend feedback ownership/upsert/cleanup tests (46 backend tes
 Phase 9 adds nine operator CLI/transaction/reporting cases (55 backend tests total). Mobile code was unchanged; prior mobile results were not rerun. See docs/PHASE_9_OPERATOR_REVIEW.md.
 
 Phase 10: all five migrations and eight table boundaries passed on disposable local PostgreSQL; 42 PostgreSQL tests passed. Default SQLite suite: 55 passed, one PostgreSQL-only test skipped. See docs/PHASE_10_POSTGRES_VALIDATION.md for exact scope.
+
+Phase 11 adds six APK ZIP-policy unit tests. Actual Android signature/package/bundle checks run only against a successfully built APK; unit fixtures are not installable apps. Workflow YAML parsed; native compilation and device testing remain pending.
+
+Phase 11 default suite result: 61 passed, one PostgreSQL-only test skipped. The actual local preview Gradle attempt failed on the React Native release AAR host with HTTP 403 after 89 tasks; no APK was emitted.
