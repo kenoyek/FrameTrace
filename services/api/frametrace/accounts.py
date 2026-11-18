@@ -108,7 +108,7 @@ def claim_guest(
 def clear_history(authorization: str | None = Header(default=None)):
     from sqlalchemy import delete
 
-    from .db import JobExecution, Match
+    from .db import Feedback, JobExecution, Match
     from .storage import remove_clip
 
     user_id = identity(authorization)
@@ -130,6 +130,7 @@ def clear_history(authorization: str | None = Header(default=None)):
             )
         )
         if ids:
+            db.execute(delete(Feedback).where(Feedback.job_id.in_(ids)))
             db.execute(delete(Match).where(Match.job_id.in_(ids)))
             db.execute(delete(JobExecution).where(JobExecution.job_id.in_(ids)))
             db.execute(delete(JobAccount).where(JobAccount.job_id.in_(ids)))

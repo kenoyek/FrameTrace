@@ -12,6 +12,7 @@ function client() {
   let failStorage = false;
   let session = null;
   const fetches = [];
+  const fetchReplies = [];
   const store = {
     async getItemAsync(key) { return storage.get(key) ?? null; },
     async setItemAsync(key, value) { if (failStorage) throw Error('storage unavailable'); storage.set(key, value); },
@@ -41,9 +42,9 @@ function client() {
     if (name === 'expo-crypto') return { getRandomBytes: () => require('node:crypto').randomBytes(32) };
     throw Error(name);
   }, process: { env: { EXPO_PUBLIC_API_URL: 'https://example.test' } },
-    fetch: async (url, options) => { fetches.push({ url, options }); return { ok: true, json: async () => ({ id: "one-job", status: "queued" }) }; }, XMLHttpRequest: XHR, FormData: class { append() {} }, queueMicrotask };
+    fetch: async (url, options) => { fetches.push({ url, options }); return fetchReplies.shift() ?? { ok: true, json: async () => ({ id: "one-job", status: "queued" }) }; }, XMLHttpRequest: XHR, FormData: class { append() {} }, queueMicrotask };
   vm.runInNewContext(output, context);
-  return { api: context.exports, storage, requests, replies, fetches, setSession(value) { session = value; }, failStorage() { failStorage = true; } };
+  return { api: context.exports, storage, requests, replies, fetches, fetchReplies, setSession(value) { session = value; }, failStorage() { failStorage = true; } };
 }
 
 test('lost response retry reuses persisted capability and remembers result', async () => {
@@ -116,4 +117,27 @@ test('accepted native upload keeps a cleanup receipt across app restarts', async
   assert.equal(access.source_share_id, id);
   assert.equal((await c.api.restore()).source_share_id, id);
   assert.equal(await c.api.restorePending(), null);
+});
+
+test('feedback uses job ownership and posts only a structured rating', async () => {
+  const c = client();
+  c.fetchReplies.push({ ok: true, json: async () => ({ rating: 'helpful' }) });
+  assert.equal(await c.api.sendFeedback({ id: 'one-job', access_token: 'guest-secret' }, 'helpful'), 'helpful');
+  assert.equal(c.fetches[0].options.headers.Authorization, 'Bearer guest-secret');
+  assert.equal(c.fetches[0].options.method, 'POST');
+  assert.equal(c.fetches[0].options.body, JSON.stringify({ rating: 'helpful' }));
+  c.setSession({ user: { id: 'owner' }, access_token: 'session-jwt' });
+  c.fetchReplies.push({ ok: true, json: async () => ({ rating: 'unsure' }) });
+  await c.api.sendFeedback({ id: 'one-job', user_id: 'owner' }, 'unsure');
+  assert.equal(c.fetches[1].options.headers.Authorization, 'Bearer session-jwt');
+  await assert.rejects(c.api.sendFeedback({ id: 'one-job', user_id: 'other' }, 'helpful'), /owns/);
+  assert.equal(c.fetches.length, 2);
+});
+test('feedback rejection or malformed response never becomes a saved rating', async () => {
+  const c = client();
+  const credential = { id: 'one-job', access_token: 'guest-secret' };
+  c.fetchReplies.push({ ok: false, status: 404 });
+  await assert.rejects(c.api.sendFeedback(credential, 'helpful'), /no longer/);
+  c.fetchReplies.push({ ok: true, json: async () => ({ rating: 'invented' }) });
+  await assert.rejects(c.api.sendFeedback(credential, 'helpful'), /Invalid/);
 });

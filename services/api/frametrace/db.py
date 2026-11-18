@@ -1,6 +1,15 @@
 from datetime import UTC, datetime
 
-from sqlalchemy import JSON, Boolean, DateTime, Float, ForeignKey, String, create_engine
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    CheckConstraint,
+    DateTime,
+    Float,
+    ForeignKey,
+    String,
+    create_engine,
+)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
 from .config import settings
@@ -33,6 +42,15 @@ class Job(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
+
+
+class Feedback(Base):
+    __tablename__ = "recognition_feedback"
+    __table_args__ = (CheckConstraint("rating in ('helpful', 'not_helpful', 'unsure')"),)
+    job_id: Mapped[str] = mapped_column(
+        ForeignKey("recognition_jobs.id", ondelete="CASCADE"), primary_key=True
+    )
+    rating: Mapped[str] = mapped_column(String)
 
 
 class Match(Base):

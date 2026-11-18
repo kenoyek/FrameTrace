@@ -1,7 +1,15 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
+
+FeedbackRating = Literal["helpful", "not_helpful", "unsure"]
+
+
+class FeedbackBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    rating: FeedbackRating
+
 
 Stage = Literal[
     "queued",
@@ -46,6 +54,7 @@ class RecognitionResult(BaseModel):
 
 
 class RecognitionJob(BaseModel):
+    feedback: FeedbackRating | None = None
     id: str
     status: Stage
     result: RecognitionResult | None

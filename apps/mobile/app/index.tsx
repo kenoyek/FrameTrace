@@ -1,3 +1,4 @@
+import { ResultFeedback } from '../src/ResultFeedback';
 import { useAppearance } from '../src/settings/AppearanceProvider';
 import { recordVideo, validateVideo } from '../src/media/capture';
 import { useSharedInbox } from '../src/sharing/useSharedInbox';
@@ -168,6 +169,7 @@ export default function Home() {
             {candidate.source_url?.startsWith('https://') && <Button title="Open indexed source" secondary onPress={() => { void Linking.openURL(candidate.source_url!).catch(() => Alert.alert('Unable to open source')); }} />}
           </View>)}
           {result.classification === 'no_match' && <Text style={{ color: color.muted }}>Try a clearer or longer excerpt. The source may not be in our catalog yet.</Text>}</>}
+        {job.data?.status === 'completed' && result && <ResultFeedback key={`${credential.id}:${credential.user_id ?? 'guest'}`} credential={credential} initial={job.data.feedback ?? null} />}
         {!working && <Button title="Delete this recognition" secondary onPress={() => Alert.alert('Delete recognition?', 'This removes the server result and the saved access on this device.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Delete', style: 'destructive', onPress: () => { void forget(); } }])} />}
       </View>}
       <Pressable accessibilityRole="button" onPress={() => router.push('/guide')} style={{ minHeight: 44, justifyContent: 'center' }}><Text style={{ color: color.accent }}>How FrameTrace works & clip privacy</Text></Pressable>

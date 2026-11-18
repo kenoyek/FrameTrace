@@ -9,7 +9,9 @@ export type Candidate = {
   start_seconds: number; timestamp_uncertainty_seconds: number;
   evidence: { aligned_frames: number; query_frames: number; coverage: number; mean_hash_distance: number };
 };
+export type FeedbackRating = 'helpful' | 'not_helpful' | 'unsure';
 export type Job = {
+  feedback?: FeedbackRating | null;
   id: string; status: string; error: string | null;
   result: null | { classification: 'matching_segment' | 'possible_match' | 'no_match'; reason: string; candidates: Candidate[] };
 };
@@ -153,4 +155,16 @@ export async function reopenAccountResult(id: string) {
 export async function discardPendingSubmission(uri: string) {
   const pending = await restorePending();
   if (pending?.uri === uri) await SecureStore.deleteItemAsync('frametrace.pendingSubmission');
+}
+
+export async function sendFeedback(credential: Credential, rating: FeedbackRating): Promise<FeedbackRating> {
+  const response = await fetch(endpoint(`/v1/recognitions/${credential.id}/feedback`), {
+    method: 'POST', headers: { Authorization: await jobAuthorization(credential), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ rating }),
+  });
+  if (!response.ok) throw new Error(response.status === 404
+    ? 'This recognition is no longer available to this session.' : 'Feedback could not be saved. Please retry.');
+  const body = await response.json();
+  if (!['helpful', 'not_helpful', 'unsure'].includes(body.rating)) throw new Error('Invalid feedback response. Please retry.');
+  return body.rating;
 }

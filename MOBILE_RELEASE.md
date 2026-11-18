@@ -57,3 +57,5 @@ its retry entry without automatically uploading a new recording.
 First-run and reusable guide acceptance (not executed on devices): see docs/PHASE_6_ONBOARDING.md.
 
 App-wide appearance and Settings device/accessibility acceptance (not executed): see docs/PHASE_7_SETTINGS.md.
+
+Structured-feedback network/restart/account/accessibility acceptance (not executed on devices): see docs/PHASE_8_FEEDBACK.md.

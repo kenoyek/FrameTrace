@@ -13,11 +13,11 @@ from starlette.concurrency import run_in_threadpool
 from .accounts import router as account_router
 from .auth import identity
 from .config import settings
-from .db import Job, JobAccount, JobExecution, Match, Reference, Session, initialize
+from .db import Feedback, Job, JobAccount, JobExecution, Match, Reference, Session, initialize
 from .ingress import UploadBoundary
 from .lifecycle import dispatch_pending
 from .privacy import PrivateResponses
-from .schemas import AcceptedJob, RecognitionJob
+from .schemas import AcceptedJob, FeedbackBody, RecognitionJob
 from .storage import discard_staged, remove_clip, stage_object
 from .tasks import recognize
 
@@ -179,7 +179,14 @@ def serialize_job(db, job):
                 "candidates": [],
                 "reason": "Reference availability changed; please search again.",
             }
-    return {"id": job.id, "status": job.status, "result": result, "error": job.error}
+    feedback = db.get(Feedback, job.id)
+    return {
+        "id": job.id,
+        "status": job.status,
+        "result": result,
+        "error": job.error,
+        "feedback": feedback.rating if feedback else None,
+    }
 
 
 @app.delete("/v1/recognitions/{job_id}", status_code=204)
@@ -188,9 +195,35 @@ def delete_recognition(job_id: str, authorization: str | None = Header(default=N
         job = owned_job(db, job_id, authorization)
         if job.status not in {"completed", "failed"}:
             raise HTTPException(409, "Processing is active; retry deletion after completion.")
+        db.execute(delete(Feedback).where(Feedback.job_id == job_id))
         db.execute(delete(Match).where(Match.job_id == job_id))
         db.execute(delete(JobExecution).where(JobExecution.job_id == job_id))
         db.execute(delete(JobAccount).where(JobAccount.job_id == job_id))
         db.delete(job)
         db.commit()
     remove_clip(job_id)
+
+
+@app.post("/v1/recognitions/{job_id}/feedback", response_model=FeedbackBody)
+def submit_feedback(
+    job_id: str, body: FeedbackBody, authorization: str | None = Header(default=None)
+):
+    from sqlalchemy.dialects.postgresql import insert as pg_insert
+    from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+    with Session() as db:
+        job = owned_job(db, job_id, authorization)
+        # Lock the parent so concurrent PostgreSQL deletion and updates serialize.
+        job = db.scalar(select(Job).where(Job.id == job_id).with_for_update())
+        if not job:
+            raise HTTPException(404, "Recognition not found.")
+        if job.status != "completed" or not job.result:
+            raise HTTPException(409, "Feedback is available after a recognition result completes.")
+        insert = sqlite_insert if db.bind.dialect.name == "sqlite" else pg_insert
+        db.execute(
+            insert(Feedback)
+            .values(job_id=job_id, rating=body.rating)
+            .on_conflict_do_update(index_elements=["job_id"], set_={"rating": body.rating})
+        )
+        db.commit()
+    return body

@@ -78,7 +78,7 @@ checkers, `npm test`, strict type checking and native bundle exports before revi
 
 `npm test` now includes shared payload validation, private URI confinement, duration/size/
 pixel limits, unsafe links, redacted errors and local cleanup receipt persistence. It runs
-30 tests in total, including camera permission/cancellation, media preflight, onboarding preference failures and appearance persistence/concurrency cases. `python scripts/test_native_share.py` executes six groups of assertions
+32 tests in total, including camera permission/cancellation, media preflight, onboarding preference failures and appearance persistence/concurrency cases. `python scripts/test_native_share.py` executes six groups of assertions
 against actual Java intake rules with JDK 17, independently of Android or Jest mocks.
 
 After Expo prebuild, `npm run native:verify` inspects the actual generated Android/iOS
@@ -87,3 +87,5 @@ matching and extension activation. CI runs those checks and native bundle export
 Swift/Kotlin compilation or physical-device proof is implied by the structural check.
 The Android Gradle build was attempted and stopped at the denied RN Maven destination;
 see docs/PHASE_4_NATIVE_SHARING.md. This phase did not change backend recognition logic.
+
+Phase 8 adds six backend feedback ownership/upsert/cleanup tests (46 backend tests total) and two mobile feedback transport cases. See docs/PHASE_8_FEEDBACK.md for limits.

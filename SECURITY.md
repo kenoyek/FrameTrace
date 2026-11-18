@@ -55,3 +55,5 @@ payloads are untrusted, checked again in JS, and still validated by the backend.
 handlers never upload automatically. URL-only shares do not trigger downloads and retain
 no path/query tokens. Device cache expiration is checked on future app/extension activity,
 not an always-running 24h device eraser. Real provider/termination/device tests remain open.
+
+Structured feedback is a bounded rating linked to a job, available only through job ownership checks. It is removed with deleted/expired recognition metadata; retained account history retains its rating. No free-text feedback or automatic training pipeline is implemented.

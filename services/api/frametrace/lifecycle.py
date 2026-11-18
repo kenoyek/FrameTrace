@@ -9,7 +9,7 @@ from kombu.exceptions import OperationalError
 from sqlalchemy import and_, delete, exists, or_, select, update
 
 from .config import settings
-from .db import Job, JobAccount, JobExecution, Match, Session
+from .db import Feedback, Job, JobAccount, JobExecution, Match, Session
 
 TERMINAL = ("completed", "failed")
 logger = logging.getLogger(__name__)
@@ -171,6 +171,7 @@ def cleanup():
                 if job.status not in TERMINAL:
                     job.status, job.error = "failed", "The clip expired before processing finished."
             else:
+                db.execute(delete(Feedback).where(Feedback.job_id == job_id))
                 db.execute(delete(Match).where(Match.job_id == job_id))
                 db.execute(delete(JobExecution).where(JobExecution.job_id == job_id))
                 db.execute(delete(JobAccount).where(JobAccount.job_id == job_id))
