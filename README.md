@@ -21,6 +21,10 @@ The account/storage phase adds JWT-owned history, favorites, native account scre
 R2-compatible private query storage. Hosted configuration is still required; see
 [the account/storage report](docs/PHASE_3_ACCOUNTS_STORAGE.md).
 
+Native share intake is now implemented in source with an iOS App Group extension and
+Android URI copying. Native build/device validation remains open; see
+[the share phase report](docs/PHASE_4_NATIVE_SHARING.md).
+
 ## Quick local run
 
 ```sh
@@ -45,3 +49,5 @@ npx expo start --dev-client
 
 Android/iOS development builds and a device-reachable API address are required for native
 validation. No public consumer website is included. No service credentials are embedded.
+
+System-camera recording with explicit preview/upload confirmation: [phase 5](docs/PHASE_5_RECORDING.md). Physical-device acceptance remains pending.

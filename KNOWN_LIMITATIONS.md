@@ -17,8 +17,10 @@
 
 - [ ] Demonstrate physical Android and iOS upload-to-result milestone
 - [ ] Signed EAS development/release builds and native integration tests
-- [ ] Native Android sharing and iOS App Group share extension
-- [ ] Timeline trimming and recording
+- [x] Android share-intent and native iOS App Group extension source + consent-first inbox UI
+- [ ] Android/iOS native compilation, device share lifecycle and provisioning acceptance
+- [x] System-camera recording flow with permission prompts, bounded capture and review before upload
+- [ ] Camera recording acceptance on physical Android/iOS devices; timeline trimming
 - [ ] Real-world authorized catalog and untouched evaluation holdout
 - [ ] Scene segmentation, robust cropped/vertical/watermarked/speed-edited retrieval
 - [ ] Audio fingerprints, transcripts, OCR, embeddings and vector search
@@ -39,9 +41,14 @@ The reference catalog is tiny, JSON-backed and scanned exhaustively. The service
 loopback because it is not hardened for public traffic. No external cloud resources or
 paid APIs have been provisioned and no production system was changed.
 
-The current npm audit also reports five moderate transitive build-tooling advisories;
-no high or critical production-tree findings were reported in this run.
+The 18 November npm audit reports 34 findings (32 high, two moderate, zero critical),
+including an unpatched Picomatch ReDoS inherited through Expo/Metro. Compatible updates
+are applied; resolving the advisory remains a release gate. See SECURITY.md.
 
 Latest reliability evidence and migration details: docs/PHASE_2_RELIABILITY.md.
 
 Account/storage implementation and hosted prerequisites: docs/PHASE_3_ACCOUNTS_STORAGE.md.
+
+Native intake source, checks and the repo.reactnative.dev build blocker: docs/PHASE_4_NATIVE_SHARING.md.
+
+Camera recording implementation and acceptance limits: docs/PHASE_5_RECORDING.md.

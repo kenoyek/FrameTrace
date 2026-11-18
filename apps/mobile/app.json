@@ -11,7 +11,11 @@
       "bundleIdentifier": "app.frametrace.mobile"
     },
     "android": {
-      "package": "app.frametrace.mobile"
+      "package": "app.frametrace.mobile",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -20,11 +24,13 @@
         "expo-image-picker",
         {
           "photosPermission": "Choose a video to identify its source.",
-          "microphonePermission": false,
-          "cameraPermission": false
+          "microphonePermission": "Record sound with your video. Nothing is uploaded until you tap Identify.",
+          "cameraPermission": "Record a short video to review and identify its source."
         }
       ],
-      "expo-video"
+      "expo-video",
+      "./plugins/with-native-share.cjs",
+      "expo-status-bar"
     ]
   }
 }

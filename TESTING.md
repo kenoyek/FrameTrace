@@ -73,3 +73,17 @@ Mobile tests cover JWT/capability routing across account changes and large Unico
 session storage, interrupted writes and logout. Hosted identity flows and physical devices
 remain separate required gates. Run `pytest services/api/tests -q`, the PostgreSQL/migration
 checkers, `npm test`, strict type checking and native bundle exports before reviewing changes.
+
+## Native share-intake phase
+
+`npm test` now includes shared payload validation, private URI confinement, duration/size/
+pixel limits, unsafe links, redacted errors and local cleanup receipt persistence. It runs
+21 tests in total, including camera permission/cancellation and media preflight cases. `python scripts/test_native_share.py` executes six groups of assertions
+against actual Java intake rules with JDK 17, independently of Android or Jest mocks.
+
+After Expo prebuild, `npm run native:verify` inspects the actual generated Android/iOS
+projects: filters, source membership, target dependency, embedding, entitlement/Info group
+matching and extension activation. CI runs those checks and native bundle exports. No
+Swift/Kotlin compilation or physical-device proof is implied by the structural check.
+The Android Gradle build was attempted and stopped at the denied RN Maven destination;
+see docs/PHASE_4_NATIVE_SHARING.md. This phase did not change backend recognition logic.

@@ -3,7 +3,7 @@ import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
 
 const base = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '');
-export type Credential = { id: string; access_token?: string; user_id?: string };
+export type Credential = { id: string; access_token?: string; user_id?: string; source_share_id?: string };
 export type Candidate = {
   reference_id: string; title: string; publisher: string; source_url: string | null;
   start_seconds: number; timestamp_uncertainty_seconds: number;
@@ -23,7 +23,7 @@ function endpoint(path: string): string {
   if (!/^https?:\/\//.test(base)) throw new Error('API address must use HTTP or HTTPS.');
   return `${base}${path}`;
 }
-export type PendingSubmission = { uri: string; name: string; mime: string; token: string; principal?: string | null };
+export type PendingSubmission = { uri: string; name: string; mime: string; token: string; principal?: string | null; share_id?: string };
 export async function restorePending(): Promise<PendingSubmission | null> {
   const saved = await SecureStore.getItemAsync('frametrace.pendingSubmission');
   if (!saved) return null;
@@ -34,14 +34,14 @@ export async function restorePending(): Promise<PendingSubmission | null> {
       /^[a-f0-9]{64}$/.test(value.token) ? value : null;
   } catch { return null; }
 }
-export async function upload(uri: string, name: string, mime: string, progress: (value: number | null) => void): Promise<Credential> {
+export async function upload(uri: string, name: string, mime: string, progress: (value: number | null) => void, shareId?: string): Promise<Credential> {
   // Persist the capability before sending. Response loss must not create a second job.
   const session = await authSession();
   const principal = session?.user.id ?? null;
   const pending = await restorePending();
   const token = pending?.uri === uri && pending.name === name && pending.mime === mime && (pending.principal ?? null) === principal
     ? pending.token : Array.from(Crypto.getRandomBytes(32), byte => byte.toString(16).padStart(2, '0')).join('');
-  await SecureStore.setItemAsync('frametrace.pendingSubmission', JSON.stringify({ uri, name, mime, token, principal }));
+  await SecureStore.setItemAsync('frametrace.pendingSubmission', JSON.stringify({ uri, name, mime, token, principal, share_id: shareId }));
   const credential = await new Promise<Credential>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', endpoint('/v1/recognitions'));
@@ -56,7 +56,7 @@ export async function upload(uri: string, name: string, mime: string, progress: 
         const body = JSON.parse(xhr.responseText);
         if (xhr.status !== 202) throw new Error(typeof body.detail === 'string' ? body.detail : 'Upload was rejected.');
         if (typeof body.id !== 'string' || typeof body.access_token !== 'string') throw new Error('Invalid API response.');
-        resolve({ ...body, ...(principal ? { user_id: principal } : {}) });
+        resolve({ ...body, ...(principal ? { user_id: principal } : {}), ...(shareId ? { source_share_id: shareId } : {}) });
       } catch (error) { reject(error); }
     };
     const data = new FormData();
@@ -148,4 +148,9 @@ export async function reopenAccountResult(id: string) {
   const session = await authSession();
   if (!session) throw new Error('Sign in to continue.');
   await remember({ id, user_id: session.user.id });
+}
+
+export async function discardPendingSubmission(uri: string) {
+  const pending = await restorePending();
+  if (pending?.uri === uri) await SecureStore.deleteItemAsync('frametrace.pendingSubmission');
 }

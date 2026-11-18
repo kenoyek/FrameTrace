@@ -142,3 +142,38 @@ FRAMETRACE_CA_BUNDLE_FILE=/etc/ssl/certs/ca-certificates.crt \
 
 This mounts a public trust bundle; it does not enable destinations or supply credentials.
 Use normal Compose when no custom runtime trust is needed. No cloud settings were changed.
+
+## Native share development
+
+The local Expo module lives under apps/mobile/modules/frametrace-share; checked-in config
+plugins regenerate Android filters and the iOS extension target. Generated apps/mobile/android
+and ios directories are ignored. Keep native source edits in the module/plugin templates.
+Prebuild can replace generated directories: preserve any manual generated edits first.
+
+```sh
+cd apps/mobile
+npm ci
+npx expo prebuild --no-install
+npm run native:verify
+npm run typecheck
+npm test
+cd ../..
+.venv/bin/python scripts/test_native_share.py
+.venv/bin/python scripts/build_android.py
+```
+
+The Java-only check needs full JDK 17 (not just a Java runtime). Set FRAMETRACE_JDK17_HOME
+if it is not discovered through JAVA_HOME or the installed task cache. The ARM64 debug
+builder additionally needs Android 37.0, build-tools 37.0.0, NDK 27.1.12297006, CMake 3.22.1
+and platform-tools. They are installed at /workspace/.cache/android-sdk in this instance;
+set ANDROID_HOME to an existing compatible SDK in another machine. It checks the official
+Gradle checksum and preserves existing cache properties outside its own proxy adapters.
+
+The Android build is currently blocked by proxy denial of repo.reactnative.dev. Add that
+host in environment settings before retrying; don't downgrade RN or bypass verification.
+No emulator or APK success is claimed. The iOS build requires macOS/Xcode and a real team
+with App Groups, plus the native device checks in MOBILE_RELEASE.md.
+
+The evaluated share library's host-launch technique was not adopted. The custom extension
+uses only a local save/complete flow; users open FrameTrace themselves. Receiving shares
+requires a native build; installing JS dependencies or opening Expo Go is insufficient.

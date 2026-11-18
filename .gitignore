@@ -11,3 +11,8 @@ dist/
 var/
 *.egg-info/
 coverage/
+
+apps/mobile/android/
+apps/mobile/ios/
+**/build/
+.gradle/

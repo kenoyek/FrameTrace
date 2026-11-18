@@ -25,10 +25,14 @@ completion/permanent failure; temporary failures retain clips for retry. Abandon
 are handled by the hourly scheduled cleanup operation. Default retention
 is 24 hours. Do not promise legal/privacy/store readiness before independent review.
 
-Dependency audit: SDK 58 removed the initial high-severity SDK 55 findings. Five
-moderate advisories remain in the Expo CLI/fingerprint dependency chain (glob/minimatch).
-These are build tooling findings; do not expose development tooling to untrusted networks.
-No zero-vulnerability or completed security-review claim is made.
+Dependency audit (18 November 2026): `npm audit --omit=dev` reports 34 findings
+(32 high, two moderate, zero critical), including inherited Expo/Metro findings from
+Picomatch's repeated-extglob ReDoS advisory, GHSA-fc5q-39xc-vjpf. Compatible updates
+were applied and Expo native packages aligned to SDK 58.0.26. The registry's latest
+Picomatch release, 4.0.7, remains affected; no patched release was available. This is an
+open release gate. Use trusted checkouts and do not expose development tooling to
+untrusted networks. No zero-vulnerability or completed security-review claim is made.
+See docs/PHASE_4_NATIVE_SHARING.md for validation scope.
 
 Submission tokens are bearer secrets, including when used in X-Submission-Token. Gateways
 and telemetry must redact this header and Authorization. Raw tokens never enter DB rows.
@@ -43,3 +47,11 @@ caches clear on identity changes. Read the phase 3 report for JWT revocation lim
 Private object transfers preserve TLS verification, validate size/hash before decoding and
 retry deletion from an independent outbox. A private R2 lifecycle rule is a deployment
 prerequisite for remote-upload/DB commit gaps; no hosted lifecycle has been configured.
+
+Native share intake copies authorized temporary content into app-controlled storage before
+preview. Android requires a read grant and rejects own-app providers and external file://
+URIs; iOS uses security-scoped provider access and protected App Group storage. Native
+payloads are untrusted, checked again in JS, and still validated by the backend. Share
+handlers never upload automatically. URL-only shares do not trigger downloads and retain
+no path/query tokens. Device cache expiration is checked on future app/extension activity,
+not an always-running 24h device eraser. Real provider/termination/device tests remain open.

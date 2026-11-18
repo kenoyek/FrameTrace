@@ -1,0 +1,48 @@
+// Verify the actual prebuilt projects. Run after `expo prebuild --no-install`.
+const fs = require('node:fs');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+const xcode = require('xcode');
+const plist = require('@expo/plist').default;
+const root = path.resolve(__dirname, '..');
+const projectPath = path.join(root, 'ios/FrameTrace.xcodeproj/project.pbxproj');
+const project = xcode.project(projectPath).parseSync();
+const targets = Object.entries(project.pbxNativeTargetSection()).filter(([, t]) => typeof t === 'object' && t.name?.replaceAll('"', '') === 'FrameTraceShare');
+assert.equal(targets.length, 1, 'Exactly one native share extension target is required');
+const [id, target] = targets[0];
+const phases = target.buildPhases.map(p => p.value);
+assert.ok(phases.some(p => project.hash.project.objects.PBXSourcesBuildPhase[p]?.files?.length === 1), 'Swift source must be compiled in the extension');
+const sources = phases.map(p => project.hash.project.objects.PBXSourcesBuildPhase[p]).find(Boolean);
+const sourceRef = project.pbxBuildFileSection()[sources.files[0].value].fileRef;
+assert.ok(Object.values(project.hash.project.objects.PBXGroup).some(group => typeof group === 'object' && group.children?.some(child => child.value === sourceRef)), 'Compiled source must also have a resolvable project group');
+const host = project.pbxNativeTargetSection()[project.getFirstProject().firstProject.targets[0].value];
+assert.ok(host.dependencies.some(dep => project.hash.project.objects.PBXTargetDependency[dep.value]?.target === id), 'Host must depend on the extension target');
+const configs = project.pbxXCConfigurationList()[target.buildConfigurationList].buildConfigurations;
+for (const config of configs) {
+  const settings = project.pbxXCBuildConfigurationSection()[config.value].buildSettings;
+  assert.equal(settings.APPLICATION_EXTENSION_API_ONLY, 'YES');
+  assert.equal(settings.CODE_SIGN_ENTITLEMENTS, '"FrameTraceShare/FrameTraceShare.entitlements"');
+}
+const info = plist.parse(fs.readFileSync(path.join(root, 'ios/FrameTraceShare/Info.plist'), 'utf8'));
+const group = info.FrameTraceAppGroup;
+assert.equal(info.NSExtension.NSExtensionPointIdentifier, 'com.apple.share-services');
+assert.equal(info.NSExtension.NSExtensionAttributes.NSExtensionActivationRule.NSExtensionActivationSupportsMovieWithMaxCount, 1);
+const entitlements = plist.parse(fs.readFileSync(path.join(root, 'ios/FrameTraceShare/FrameTraceShare.entitlements'), 'utf8'));
+assert.ok(entitlements['com.apple.security.application-groups'].includes(group));
+const hostInfo = plist.parse(fs.readFileSync(path.join(root, 'ios/FrameTrace/Info.plist'), 'utf8'));
+assert.equal(hostInfo.FrameTraceAppGroup, group);
+assert.ok(hostInfo.NSCameraUsageDescription?.includes('Record'));
+assert.ok(hostInfo.NSMicrophoneUsageDescription?.includes('Record'));
+const hostEntitlements = plist.parse(fs.readFileSync(path.join(root, 'ios/FrameTrace/FrameTrace.entitlements'), 'utf8'));
+assert.ok(hostEntitlements['com.apple.security.application-groups'].includes(group));
+const embed = Object.values(project.hash.project.objects.PBXCopyFilesBuildPhase).filter(p => typeof p === 'object').flatMap(p => p.files ?? []);
+assert.equal(embed.filter(p => p.comment?.includes('FrameTraceShare.appex')).length, 1, 'Extension must be embedded exactly once');
+const android = fs.readFileSync(path.join(root, 'android/app/src/main/AndroidManifest.xml'), 'utf8');
+assert.ok(android.includes('android.intent.action.SEND') && android.includes('video/*') && android.includes('text/plain'));
+assert.ok(!android.includes('android.intent.action.SEND_MULTIPLE'));
+assert.ok(android.includes('android.permission.CAMERA'));
+assert.ok(android.includes('android.permission.RECORD_AUDIO'));
+const swift = fs.readFileSync(path.join(root, 'plugins/native-share/ShareViewController.swift'), 'utf8');
+assert.equal(fs.readFileSync(path.join(root, 'ios/FrameTraceShare/ShareViewController.swift'), 'utf8'), swift, 'Prebuild must include the current extension source');
+assert.ok(!/UIApplication\s*\.|as\??\s+UIApplication|URLSession|WKWebView/.test(swift), 'No host-launch or network shortcut in the extension');
+console.log('Prebuilt Android filters and iOS extension source/target/embedding/App Groups verified.');

@@ -108,3 +108,12 @@ test('guest discovery keeps its capability until explicitly claimed', async () =
   await c.api.fetchJob(access);
   assert.equal(c.fetches[0].options.headers.Authorization, 'Bearer '+access.access_token);
 });
+
+test('accepted native upload keeps a cleanup receipt across app restarts', async () => {
+  const c = client();
+  const id = '12345678-1234-1234-1234-123456789abc';
+  const access = await c.api.upload('file:///clip.mp4', 'clip.mp4', 'video/mp4', () => {}, id);
+  assert.equal(access.source_share_id, id);
+  assert.equal((await c.api.restore()).source_share_id, id);
+  assert.equal(await c.api.restorePending(), null);
+});
