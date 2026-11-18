@@ -23,11 +23,12 @@ rejection, unauthorized job access, revocation of saved results, result deletion
 size limits, malformed containers and duration limits. TestClient runs the local executor;
 the separate smoke test exercises real HTTP, PostgreSQL, Redis and an independent worker.
 
-Development benchmark output is committed in docs/benchmark-development.json. Four edited
-positive cases and one negative are too small to support accuracy or latency SLO claims.
-Crop rejection is a known matcher limitation, not a passing robustness scenario. There is
-no real-world holdout dataset yet. No audio exists in these fixtures; do not claim audio
-recognition, muted/replaced-audio robustness or multilingual evaluation.
+Current version 2 diagnostics are committed in docs/benchmark-expanded-development.json:
+eight positive edits, two unknown videos and two catalog references. Three edits confirm
+the correct source and timestamp; five fail. This tiny synthetic corpus supports no
+real-world accuracy or latency SLO claim. The v1 report remains historical and used
+any-candidate scoring, so its rate is not directly comparable. No audio exists in these
+fixtures. See docs/PHASE_14_RECOGNITION_EVALUATION.md for scoring and gate definitions.
 
 The installed Starlette emits a TestClient/httpx deprecation warning; all tests still
 execute. Mobile checks establish source/bundle compilation, not native device behavior.
@@ -101,3 +102,5 @@ Phase 11 default suite result: 61 passed, one PostgreSQL-only test skipped. The 
 Phase 12: 32 mobile tests, TypeScript, Android-only and full native-project checks passed. Workflow YAML parsed. The intent MIME snapshot fix still requires native compilation/device testing; no APK is claimed. See docs/PHASE_12_ANDROID_BUILD_REVIEW.md.
 
 Phase 13: 38 mobile tests and TypeScript passed, including six API diagnostic transport cases. Both JavaScript bundles exported. Phone/API connectivity and native-build acceptance remain pending; see docs/PHASE_13_API_CONNECTION_CHECK.md.
+
+Phase 14: 66 backend tests passed, one PostgreSQL-only test skipped; real synthetic media generation/decoding and clean/unknown core gates passed. CI now exports its evaluation report.

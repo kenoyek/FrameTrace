@@ -39,7 +39,7 @@
 - [ ] Onboarding/settings device and accessibility acceptance, push notifications, analytics and full profile flows
 - [ ] Accessibility/device QA, licensed branding assets, privacy review and store release
 
-Cropped synthetic footage currently fails matching. No numeric score is displayed as a
+Cropped, mirrored, rotated, speed-edited and letterboxed synthetic cases currently fail matching. No numeric score is displayed as a
 probability. No original creator is inferred. Source links are optional operator assertions.
 The reference catalog is tiny, JSON-backed and scanned exhaustively. The service binds to
 loopback because it is not hardened for public traffic. No external cloud resources or
@@ -72,3 +72,5 @@ Android test-APK workflow and verifier are configured; no successful native buil
 Android intent MIME lifetime fix and failure diagnostic artifacts: docs/PHASE_12_ANDROID_BUILD_REVIEW.md. Native compilation/device acceptance and APK delivery remain open.
 
 In-app API health diagnostic: docs/PHASE_13_API_CONNECTION_CHECK.md. A responding probe does not establish worker or upload readiness; APK delivery and phone acceptance remain open.
+
+Corrected scoring and eight-edit/two-unknown synthetic diagnostics: docs/PHASE_14_RECOGNITION_EVALUATION.md. These are not product accuracy measurements.

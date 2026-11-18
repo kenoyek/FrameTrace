@@ -65,3 +65,5 @@ Local PostgreSQL migration and privacy-boundary evidence: [phase 10](docs/PHASE_
 Android test APK build/download instructions: [phase 11](docs/PHASE_11_ANDROID_TEST_APK.md). A successful verified artifact is required before phone testing; no APK has been produced here yet.
 
 Settings includes a no-upload API connection check: [phase 13](docs/PHASE_13_API_CONNECTION_CHECK.md).
+
+Expanded synthetic recognition diagnostics and corrected source/timestamp scoring: [phase 14](docs/PHASE_14_RECOGNITION_EVALUATION.md). Five edited-video cases still fail matching.

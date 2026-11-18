@@ -1,0 +1,257 @@
+{
+  "report_version": 2,
+  "scope": "Original synthetic development fixtures, two-reference catalog; no independent holdout or real-world accuracy claim.",
+  "fingerprint_version": "dhash64-v1-fps2",
+  "timestamp_tolerance_seconds": 0.5,
+  "positive_cases": 8,
+  "negative_cases": 2,
+  "top_1_retrieval": 0.375,
+  "localized_retrieval": 0.375,
+  "confirmed_localized_retrieval": 0.375,
+  "out_of_catalog_rejection": 1.0,
+  "p50_latency_seconds": 0.1637,
+  "p95_latency_seconds": 0.20170999999999994,
+  "latency_scope": "Local decode, feature extraction and exhaustive matching; excludes reference indexing, network, queue and upload.",
+  "runtime": {
+    "opencv": "4.14.0",
+    "numpy": "2.5.4",
+    "ffmpeg": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "input_sha256": {
+    "reference.mp4": "582129014cd916b55962976a03f404773541575f41da380d915952b766fbfb16",
+    "reference_other.mp4": "c11ce7dcddd3780b8322cc7f88592ae7d616a4c83f51a7d989911a929ede32cc",
+    "clean.mp4": "7de0900d9b3a93d2f73304dabb69fe2c2f303fe6db0557699af31f73a0a2c551",
+    "compressed.mp4": "5f7d5c72be415b82415780471c563e9f3de2760b40bab8d14c5adf15928f6fc5",
+    "cropped.mp4": "10e5faa0f3bced253bad4b3778879caa671eb38192912981fa817f16d9285a52",
+    "captioned.mp4": "b19585633c490ab95843b7e24d7bd6761cfa51f5d1343f656a98ee640d9b2b00",
+    "mirrored.mp4": "2095389d78105eb8cfa63f2a4654704d7120962d6357244ae06a84817a09c1e6",
+    "rotated.mp4": "af42a5ce3ee8bf3797a59c52cd7d3a47bb595b91b5d61cf341c3f58e79118ea3",
+    "speed_up.mp4": "d7b65a535084baa6246391005bc3833ead01c9625d52143424c8fc99dc759a87",
+    "letterboxed.mp4": "da611be1c5be0edba9f3a704f453f16585e6a161fb56dbc2df057bae4eef93b1",
+    "negative.mp4": "3926b87064de4c872ed828b0cbe87b9b753ee770102f36b61a72363972022645",
+    "negative_other.mp4": "69e8a4d4375c07271d516949dfa44367398e3c6f33f25dd0f7b09f85fcd80afa"
+  },
+  "cases": [
+    {
+      "case": "clean",
+      "classification": "matching_segment",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": true,
+      "localized_correctly": true,
+      "timestamp_error_seconds": 0.0,
+      "confirmed_correctly": true,
+      "correct_decision": true,
+      "latency_seconds": 0.1707,
+      "result": {
+        "classification": "matching_segment",
+        "candidates": [
+          {
+            "reference_id": "synthetic-42",
+            "title": "synthetic-42",
+            "publisher": "FrameTrace",
+            "source_url": null,
+            "start_seconds": 4.0,
+            "timestamp_uncertainty_seconds": 0.5,
+            "evidence": {
+              "aligned_frames": 12,
+              "query_frames": 12,
+              "coverage": 1.0,
+              "mean_hash_distance": 0.08
+            },
+            "ranking_score": 0.9986979166666666,
+            "attribution": "indexed_reference"
+          }
+        ],
+        "reason": "Consecutive visual fingerprints align to an indexed recording; original ownership is unverified."
+      }
+    },
+    {
+      "case": "compressed",
+      "classification": "matching_segment",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": true,
+      "localized_correctly": true,
+      "timestamp_error_seconds": 0.0,
+      "confirmed_correctly": true,
+      "correct_decision": true,
+      "latency_seconds": 0.1591,
+      "result": {
+        "classification": "matching_segment",
+        "candidates": [
+          {
+            "reference_id": "synthetic-42",
+            "title": "synthetic-42",
+            "publisher": "FrameTrace",
+            "source_url": null,
+            "start_seconds": 4.0,
+            "timestamp_uncertainty_seconds": 0.5,
+            "evidence": {
+              "aligned_frames": 12,
+              "query_frames": 12,
+              "coverage": 1.0,
+              "mean_hash_distance": 0.92
+            },
+            "ranking_score": 0.9856770833333334,
+            "attribution": "indexed_reference"
+          }
+        ],
+        "reason": "Consecutive visual fingerprints align to an indexed recording; original ownership is unverified."
+      }
+    },
+    {
+      "case": "cropped",
+      "classification": "no_match",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": false,
+      "localized_correctly": false,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": false,
+      "correct_decision": false,
+      "latency_seconds": 0.1581,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "captioned",
+      "classification": "matching_segment",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": true,
+      "localized_correctly": true,
+      "timestamp_error_seconds": 0.0,
+      "confirmed_correctly": true,
+      "correct_decision": true,
+      "latency_seconds": 0.1585,
+      "result": {
+        "classification": "matching_segment",
+        "candidates": [
+          {
+            "reference_id": "synthetic-42",
+            "title": "synthetic-42",
+            "publisher": "FrameTrace",
+            "source_url": null,
+            "start_seconds": 4.0,
+            "timestamp_uncertainty_seconds": 0.5,
+            "evidence": {
+              "aligned_frames": 12,
+              "query_frames": 12,
+              "coverage": 1.0,
+              "mean_hash_distance": 1.08
+            },
+            "ranking_score": 0.9830729166666666,
+            "attribution": "indexed_reference"
+          }
+        ],
+        "reason": "Consecutive visual fingerprints align to an indexed recording; original ownership is unverified."
+      }
+    },
+    {
+      "case": "mirrored",
+      "classification": "no_match",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": false,
+      "localized_correctly": false,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": false,
+      "correct_decision": false,
+      "latency_seconds": 0.164,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "rotated",
+      "classification": "no_match",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": false,
+      "localized_correctly": false,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": false,
+      "correct_decision": false,
+      "latency_seconds": 0.1533,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "speed_up",
+      "classification": "no_match",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": false,
+      "localized_correctly": false,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": false,
+      "correct_decision": false,
+      "latency_seconds": 0.1696,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "letterboxed",
+      "classification": "no_match",
+      "expected_reference": "synthetic-42",
+      "expected_start_seconds": 4,
+      "top_1_source_correct": false,
+      "localized_correctly": false,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": false,
+      "correct_decision": false,
+      "latency_seconds": 0.2225,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "negative",
+      "classification": "no_match",
+      "expected_reference": null,
+      "expected_start_seconds": null,
+      "top_1_source_correct": null,
+      "localized_correctly": null,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": null,
+      "correct_decision": true,
+      "latency_seconds": 0.1763,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    },
+    {
+      "case": "negative_other",
+      "classification": "no_match",
+      "expected_reference": null,
+      "expected_start_seconds": null,
+      "top_1_source_correct": null,
+      "localized_correctly": null,
+      "timestamp_error_seconds": null,
+      "confirmed_correctly": null,
+      "correct_decision": true,
+      "latency_seconds": 0.1634,
+      "result": {
+        "classification": "no_match",
+        "candidates": [],
+        "reason": "No temporally consistent match in the active reference catalog."
+      }
+    }
+  ]
+}

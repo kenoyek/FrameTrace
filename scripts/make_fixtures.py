@@ -77,13 +77,26 @@ def video(path: Path, seed: int, seconds: int = 16):
 
 def fixtures(folder: Path):
     folder.mkdir(parents=True, exist_ok=True)
-    for name, seed in [("reference", 42), ("negative", 73)]:
-        video(folder / f"{name}.mp4", seed)
+    for name, seed in [
+        ("reference", 42),
+        ("reference_other", 99),
+        ("negative", 73),
+        ("negative_other", 107),
+    ]:
+        video(
+            folder / f"{name}.mp4",
+            seed,
+            seconds=16 if name.startswith("reference") else 6,
+        )
     for name, extra in [
         ("clean", []),
         ("compressed", ["-vf", "scale=160:120", "-crf", "32"]),
         ("cropped", ["-vf", "crop=240:200:40:20"]),
         ("captioned", ["-vf", "drawbox=x=0:y=200:w=320:h=25:color=white:t=fill"]),
+        ("mirrored", ["-vf", "hflip"]),
+        ("rotated", ["-vf", "transpose=1"]),
+        ("speed_up", ["-vf", "setpts=PTS/1.25"]),
+        ("letterboxed", ["-vf", "pad=320:320:0:40:black"]),
     ]:
         subprocess.run(
             [
