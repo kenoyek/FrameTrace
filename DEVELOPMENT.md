@@ -195,3 +195,5 @@ Ingest/revoke now require `--actor`; revoke also requires `--reason`. Actor labe
 operator-supplied metadata, not authenticated identities. CLI access requires trusted
 server DB credentials; do not publish these commands as an unauthenticated admin service.
 See docs/PHASE_9_OPERATOR_REVIEW.md for output fields and audit/aggregation limits.
+
+Local PostgreSQL validation now checks all five migrations/eight tables, client CRUD denial and RLS under a temporary read grant. The PostgreSQL runner includes feedback/operator and concurrent-feedback cases; see docs/PHASE_10_POSTGRES_VALIDATION.md. These checks require disposable local database creation, not hosted credentials.

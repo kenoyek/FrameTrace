@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
@@ -6,7 +7,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import delete
 
 from frametrace.app import app, token_hash
-from frametrace.db import Feedback, Job, JobAccount, JobExecution, Session
+from frametrace.db import Feedback, Job, JobAccount, JobExecution, Session, engine
 from frametrace.lifecycle import cleanup
 
 
@@ -120,3 +121,18 @@ def test_explicit_deletion_removes_feedback(result):
     assert client.delete(url, headers=headers).status_code == 204
     with Session() as db:
         assert db.get(Feedback, job_id) is None
+
+
+@pytest.mark.skipif(engine.dialect.name != "postgresql", reason="Requires PostgreSQL row locks")
+def test_concurrent_feedback_upserts_remain_single_owner_row(result):
+    client, job_id, headers = result
+    url = f"/v1/recognitions/{job_id}/feedback"
+    ratings = ["helpful", "not_helpful", "unsure"] * 3
+
+    def submit(rating):
+        return client.post(url, headers=headers, json={"rating": rating}).status_code
+
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        assert list(pool.map(submit, ratings)) == [200] * len(ratings)
+    with Session() as db:
+        assert db.get(Feedback, job_id).rating in ratings

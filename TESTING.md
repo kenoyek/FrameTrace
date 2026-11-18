@@ -91,3 +91,5 @@ see docs/PHASE_4_NATIVE_SHARING.md. This phase did not change backend recognitio
 Phase 8 adds six backend feedback ownership/upsert/cleanup tests (46 backend tests total) and two mobile feedback transport cases. See docs/PHASE_8_FEEDBACK.md for limits.
 
 Phase 9 adds nine operator CLI/transaction/reporting cases (55 backend tests total). Mobile code was unchanged; prior mobile results were not rerun. See docs/PHASE_9_OPERATOR_REVIEW.md.
+
+Phase 10: all five migrations and eight table boundaries passed on disposable local PostgreSQL; 42 PostgreSQL tests passed. Default SQLite suite: 55 passed, one PostgreSQL-only test skipped. See docs/PHASE_10_POSTGRES_VALIDATION.md for exact scope.

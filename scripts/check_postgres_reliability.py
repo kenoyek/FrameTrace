@@ -1,4 +1,4 @@
-"""Run lease/idempotency tests against a new disposable local PostgreSQL database."""
+"""Run reliability, ownership, feedback and operator tests against a new disposable local PostgreSQL database."""
 
 import os
 import subprocess
@@ -28,6 +28,8 @@ def main():
                     "pytest",
                     "services/api/tests/test_reliability.py",
                     "services/api/tests/test_accounts.py",
+                    "services/api/tests/test_feedback.py",
+                    "services/api/tests/test_operations.py",
                     "-q",
                 ],
                 env=environment,

@@ -7,7 +7,7 @@ import pytest
 from sqlalchemy import delete
 
 from frametrace import cli
-from frametrace.db import CatalogAudit, Feedback, Job, Reference, Session, initialize
+from frametrace.db import CatalogAudit, Feedback, Job, JobExecution, Reference, Session, initialize
 from frametrace.operations import audit_page, catalog_page, feedback_summary, record_catalog_event
 
 
@@ -153,6 +153,7 @@ def test_summary_counts_retained_feedback_by_job_creation_window_without_identif
     finally:
         with Session() as db:
             db.execute(delete(Feedback).where(Feedback.job_id.in_(ids)))
+            db.execute(delete(JobExecution).where(JobExecution.job_id.in_(ids)))
             db.execute(delete(Job).where(Job.id.in_(ids)))
             db.commit()
 

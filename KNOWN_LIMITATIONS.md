@@ -64,3 +64,5 @@ App-wide appearance implementation and remaining settings QA: docs/PHASE_7_SETTI
 Structured feedback API, cleanup and migration scope: docs/PHASE_8_FEEDBACK.md.
 
 Local operator CLI review, audit scope and deployment limits: docs/PHASE_9_OPERATOR_REVIEW.md.
+
+Local PostgreSQL evidence now covers all five migrations/eight tables and feedback/operator tests: docs/PHASE_10_POSTGRES_VALIDATION.md. Hosted rollout and deployment-role validation remain open.

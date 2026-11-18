@@ -59,3 +59,5 @@ Persisted app-wide appearance and Settings: [phase 7](docs/PHASE_7_SETTINGS.md).
 Optional private result feedback: [phase 8](docs/PHASE_8_FEEDBACK.md), including its additive database migration.
 
 Local catalog and feedback review commands with catalog change records: [phase 9](docs/PHASE_9_OPERATOR_REVIEW.md). Ingest/revoke now require an operator label; revoke also requires a reason.
+
+Local PostgreSQL migration and privacy-boundary evidence: [phase 10](docs/PHASE_10_POSTGRES_VALIDATION.md). Hosted rollout remains pending.
