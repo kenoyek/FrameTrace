@@ -32,7 +32,8 @@
 - [ ] Hosted R2 validation, lifecycle setup, direct signed upload/download and reference storage
 - [ ] Distributed user/tenant rate limits, per-job decoder sandbox and production metrics
 - [ ] Restricted admin console, audit logs, feedback and catalog removal workflows
-- [ ] Push notifications, analytics, onboarding and full settings/profile flows
+- [x] First-run introduction, versioned local preference and reusable clip privacy guide
+- [ ] Onboarding device/accessibility acceptance, push notifications, analytics and full settings/profile flows
 - [ ] Accessibility/device QA, licensed branding assets, privacy review and store release
 
 Cropped synthetic footage currently fails matching. No numeric score is displayed as a
@@ -52,3 +53,5 @@ Account/storage implementation and hosted prerequisites: docs/PHASE_3_ACCOUNTS_S
 Native intake source, checks and the repo.reactnative.dev build blocker: docs/PHASE_4_NATIVE_SHARING.md.
 
 Camera recording implementation and acceptance limits: docs/PHASE_5_RECORDING.md.
+
+Introduction implementation and device acceptance: docs/PHASE_6_ONBOARDING.md.

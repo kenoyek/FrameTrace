@@ -78,7 +78,7 @@ checkers, `npm test`, strict type checking and native bundle exports before revi
 
 `npm test` now includes shared payload validation, private URI confinement, duration/size/
 pixel limits, unsafe links, redacted errors and local cleanup receipt persistence. It runs
-21 tests in total, including camera permission/cancellation and media preflight cases. `python scripts/test_native_share.py` executes six groups of assertions
+25 tests in total, including camera permission/cancellation, media preflight and onboarding preference failure cases. `python scripts/test_native_share.py` executes six groups of assertions
 against actual Java intake rules with JDK 17, independently of Android or Jest mocks.
 
 After Expo prebuild, `npm run native:verify` inspects the actual generated Android/iOS

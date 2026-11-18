@@ -51,3 +51,5 @@ Android/iOS development builds and a device-reachable API address are required f
 validation. No public consumer website is included. No service credentials are embedded.
 
 System-camera recording with explicit preview/upload confirmation: [phase 5](docs/PHASE_5_RECORDING.md). Physical-device acceptance remains pending.
+
+First-run introduction and clip privacy guide: [phase 6](docs/PHASE_6_ONBOARDING.md). Device/accessibility acceptance remains pending.

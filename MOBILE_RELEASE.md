@@ -14,7 +14,7 @@ Android ACTION_SEND intake and a custom native iOS share extension/App Group inb
 now implemented. See docs/PHASE_4_NATIVE_SHARING.md for the build blocker and validation
 limits. Expo Go is not the native-integration acceptance target.
 
-Pending: native build/device acceptance, on-device trimming, physical-device camera capture acceptance, onboarding,
+Pending: native build/device acceptance, on-device trimming, physical-device camera capture and onboarding acceptance,
 notifications, saved history, native artwork/splash, trademark checks, voice-over/TalkBack,
 large-font/reduced-motion audit, data safety labels and store privacy disclosures.
 
@@ -53,3 +53,5 @@ recognition POST occurs until Identify. Check returned video size, rotation/reso
 audio and preview playback; OS duration limits may vary, so preflight/server validation
 must still reject overlong clips. Verify discarding/replacing an interrupted upload clears
 its retry entry without automatically uploading a new recording.
+
+First-run and reusable guide acceptance (not executed on devices): see docs/PHASE_6_ONBOARDING.md.
