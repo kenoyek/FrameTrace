@@ -68,3 +68,5 @@ Local operator CLI review, audit scope and deployment limits: docs/PHASE_9_OPERA
 Local PostgreSQL evidence now covers all five migrations/eight tables and feedback/operator tests: docs/PHASE_10_POSTGRES_VALIDATION.md. Hosted rollout and deployment-role validation remain open.
 
 Android test-APK workflow and verifier are configured; no successful native build/install is claimed. Current cloud AAR access is still denied. See docs/PHASE_11_ANDROID_TEST_APK.md.
+
+Android intent MIME lifetime fix and failure diagnostic artifacts: docs/PHASE_12_ANDROID_BUILD_REVIEW.md. Native compilation/device acceptance and APK delivery remain open.

@@ -62,12 +62,16 @@ jobs:
           npm run typecheck
           npm test
           EXPO_OFFLINE=1 npx expo prebuild --platform android --no-install
+          npm run native:verify -- --android-only
       - name: Build development-signed test APK
         env:
           FRAMETRACE_JDK17_HOME: ${{ env.JAVA_HOME }}
           GRADLE_USER_HOME: ${{ runner.temp }}/frametrace-gradle
           ANDROID_USER_HOME: ${{ runner.temp }}/frametrace-android
-        run: python scripts/build_android.py --variant "$VARIANT"
+        run: |
+          mkdir -p diagnostics
+          set -o pipefail
+          python scripts/build_android.py --variant "$VARIANT" 2>&1 | tee diagnostics/gradle-build.log
       - name: Verify and stage APK
         run: |
           if [ "$VARIANT" = debug ]; then BUILD_TYPE=debug; else BUILD_TYPE=release; fi
@@ -81,3 +85,29 @@ jobs:
           path: artifacts/
           if-no-files-found: error
           retention-days: 14
+
+      - name: Preserve native-build diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-build-diagnostics-${{ github.sha }}
+          path: |
+            diagnostics/
+            apps/mobile/android/build/reports/problems/
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Explain test artifact readiness
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          info = Path('artifacts/build-info.json')
+          ready = os.environ['JOB_STATUS'] == 'success' and info.exists()
+          message = ('Verified test APK uploaded. Download the FrameTrace artifact from this run. Device acceptance is still pending.'
+                     if ready else 'No successful APK delivery is confirmed by this run. Inspect the failed step and any diagnostic artifact.')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write(message + '\n')
+          PY

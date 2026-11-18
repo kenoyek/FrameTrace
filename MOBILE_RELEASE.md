@@ -63,3 +63,5 @@ Structured-feedback network/restart/account/accessibility acceptance (not execut
 ## Obtaining an Android test APK
 
 See docs/PHASE_11_ANDROID_TEST_APK.md and the Android test APK GitHub Actions workflow. A green run uploads a verified development-signed ARM64 artifact. No APK or physical-device acceptance is claimed yet. Internal preview embeds JavaScript; debug requires Metro.
+
+Native build failures now upload a separate diagnostic artifact when Gradle logs/reports exist. It is not installable. Phase 12 corrects MIME capture before Android intent cleanup; include real shared-video import in device acceptance.

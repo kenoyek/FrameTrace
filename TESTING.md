@@ -97,3 +97,5 @@ Phase 10: all five migrations and eight table boundaries passed on disposable lo
 Phase 11 adds six APK ZIP-policy unit tests. Actual Android signature/package/bundle checks run only against a successfully built APK; unit fixtures are not installable apps. Workflow YAML parsed; native compilation and device testing remain pending.
 
 Phase 11 default suite result: 61 passed, one PostgreSQL-only test skipped. The actual local preview Gradle attempt failed on the React Native release AAR host with HTTP 403 after 89 tasks; no APK was emitted.
+
+Phase 12: 32 mobile tests, TypeScript, Android-only and full native-project checks passed. Workflow YAML parsed. The intent MIME snapshot fix still requires native compilation/device testing; no APK is claimed. See docs/PHASE_12_ANDROID_BUILD_REVIEW.md.

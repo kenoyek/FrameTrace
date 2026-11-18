@@ -87,6 +87,8 @@ class FrameTraceShareModule : Module() {
       seen[intent] = true
     }
     val action = intent.action
+    // Intent.setData clears type: snapshot MIME before clearing borrowed intent data.
+    val mime = intent.type ?: ""
     val hasReadGrant = intent.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION != 0
     val envelope: Pair<Uri?, String?>? = try {
       val uri = if (Build.VERSION.SDK_INT >= 33) intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
@@ -120,7 +122,6 @@ class FrameTraceShareModule : Module() {
           require(content.authority?.substringAfterLast('@') != context.packageName && content.authority?.substringAfterLast('@')?.startsWith(context.packageName + ".") != true) {
             "Choose this video from your gallery instead."
           }
-          val mime = intent.type ?: ""
           require(mime.startsWith("video/")) { "Share an MP4 or MOV video file." }
           val destination = File(folder, "clip.mp4")
           val length = context.contentResolver.openInputStream(content)?.use { input ->

@@ -5,6 +5,15 @@ const assert = require('node:assert/strict');
 const xcode = require('xcode');
 const plist = require('@expo/plist').default;
 const root = path.resolve(__dirname, '..');
+const android = fs.readFileSync(path.join(root, 'android/app/src/main/AndroidManifest.xml'), 'utf8');
+assert.ok(android.includes('android.intent.action.SEND') && android.includes('video/*') && android.includes('text/plain'));
+assert.ok(!android.includes('android.intent.action.SEND_MULTIPLE'));
+assert.ok(android.includes('android.permission.CAMERA'));
+assert.ok(android.includes('android.permission.RECORD_AUDIO'));
+if (process.argv.includes('--android-only')) {
+  console.log('Prebuilt Android share filters and camera/microphone permissions verified.');
+  process.exit(0);
+}
 const projectPath = path.join(root, 'ios/FrameTrace.xcodeproj/project.pbxproj');
 const project = xcode.project(projectPath).parseSync();
 const targets = Object.entries(project.pbxNativeTargetSection()).filter(([, t]) => typeof t === 'object' && t.name?.replaceAll('"', '') === 'FrameTraceShare');
@@ -37,11 +46,6 @@ const hostEntitlements = plist.parse(fs.readFileSync(path.join(root, 'ios/FrameT
 assert.ok(hostEntitlements['com.apple.security.application-groups'].includes(group));
 const embed = Object.values(project.hash.project.objects.PBXCopyFilesBuildPhase).filter(p => typeof p === 'object').flatMap(p => p.files ?? []);
 assert.equal(embed.filter(p => p.comment?.includes('FrameTraceShare.appex')).length, 1, 'Extension must be embedded exactly once');
-const android = fs.readFileSync(path.join(root, 'android/app/src/main/AndroidManifest.xml'), 'utf8');
-assert.ok(android.includes('android.intent.action.SEND') && android.includes('video/*') && android.includes('text/plain'));
-assert.ok(!android.includes('android.intent.action.SEND_MULTIPLE'));
-assert.ok(android.includes('android.permission.CAMERA'));
-assert.ok(android.includes('android.permission.RECORD_AUDIO'));
 const swift = fs.readFileSync(path.join(root, 'plugins/native-share/ShareViewController.swift'), 'utf8');
 assert.equal(fs.readFileSync(path.join(root, 'ios/FrameTraceShare/ShareViewController.swift'), 'utf8'), swift, 'Prebuild must include the current extension source');
 assert.ok(!/UIApplication\s*\.|as\??\s+UIApplication|URLSession|WKWebView/.test(swift), 'No host-launch or network shortcut in the extension');

@@ -199,3 +199,5 @@ See docs/PHASE_9_OPERATOR_REVIEW.md for output fields and audit/aggregation limi
 Local PostgreSQL validation now checks all five migrations/eight tables, client CRUD denial and RLS under a temporary read grant. The PostgreSQL runner includes feedback/operator and concurrent-feedback cases; see docs/PHASE_10_POSTGRES_VALIDATION.md. These checks require disposable local database creation, not hosted credentials.
 
 The Android helper now supports `--variant debug` (default, Metro) and `--variant internal-preview` (bundled release variant with development signing). APK verification/delivery instructions and API configuration are in docs/PHASE_11_ANDROID_TEST_APK.md. A GitHub Actions build is configured; no successful APK build is claimed yet.
+
+For Android-only prebuilds, run `npm --prefix apps/mobile run native:verify -- --android-only`. The APK workflow runs this check and preserves Gradle diagnostics on failures. See docs/PHASE_12_ANDROID_BUILD_REVIEW.md for current native-build limits.
