@@ -69,3 +69,5 @@ Settings includes a no-upload API connection check: [phase 13](docs/PHASE_13_API
 Expanded synthetic recognition diagnostics and corrected source/timestamp scoring: [phase 14](docs/PHASE_14_RECOGNITION_EVALUATION.md). Five edited-video cases still fail matching.
 
 Exact fingerprint candidate lookup with representation-version filtering: [phase 15](docs/PHASE_15_FINGERPRINT_INDEX.md). Recognition decisions remain unchanged on the ten-video development corpus.
+
+A bundled ARM64 Android test APK was built and verified on 19 November 2026: [build evidence and limits](docs/ANDROID_TEST_APK_READY.md). The delivered artifact has no API URL configured and is for initial local UI/intake testing.

@@ -63,6 +63,7 @@ def main():
                 "Internal preview must use the generated debug signing configuration."
             )
     env = os.environ.copy()
+    env["EXPO_NO_TELEMETRY"] = "1"
     env["JAVA_HOME"] = str(find_jdk17())
     sdk = pathlib.Path(env.get("ANDROID_HOME", "/workspace/.cache/android-sdk"))
     if not (sdk / "platforms/android-37.0/android.jar").exists():

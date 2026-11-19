@@ -18,7 +18,8 @@
 - [ ] Demonstrate physical Android and iOS upload-to-result milestone
 - [ ] Signed EAS development/release builds and native integration tests
 - [x] Android share-intent and native iOS App Group extension source + consent-first inbox UI
-- [ ] Android/iOS native compilation, device share lifecycle and provisioning acceptance
+- [x] Android internal-preview native compilation and APK signature/package/bundle verification
+- [ ] Android device share lifecycle acceptance; iOS native compilation and provisioning
 - [x] System-camera recording flow with permission prompts, bounded capture and review before upload
 - [ ] Camera recording acceptance on physical Android/iOS devices; timeline trimming
 - [ ] Real-world authorized catalog and untouched evaluation holdout
@@ -76,3 +77,5 @@ In-app API health diagnostic: docs/PHASE_13_API_CONNECTION_CHECK.md. A respondin
 Corrected scoring and eight-edit/two-unknown synthetic diagnostics: docs/PHASE_14_RECOGNITION_EVALUATION.md. These are not product accuracy measurements.
 
 Exact fingerprint candidate indexing and unchanged ten-video results: docs/PHASE_15_FINGERPRINT_INDEX.md. No large-catalog throughput claim is made.
+
+Latest Android status supersedes earlier build-blocked reports: docs/ANDROID_TEST_APK_READY.md. A real development-signed APK exists; device acceptance and API-configured recognition testing remain pending.

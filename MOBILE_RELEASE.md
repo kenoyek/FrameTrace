@@ -67,3 +67,5 @@ See docs/PHASE_11_ANDROID_TEST_APK.md and the Android test APK GitHub Actions wo
 Native build failures now upload a separate diagnostic artifact when Gradle logs/reports exist. It is not installable. Phase 12 corrects MIME capture before Android intent cleanup; include real shared-video import in device acceptance.
 
 Settings → Check connection probes the configured API/database without a clip or auth token. It does not test the recognition worker. Execute the healthy/offline/timeout/wrong-address phone cases in docs/PHASE_13_API_CONNECTION_CHECK.md before upload testing.
+
+Latest artifact: a verified bundled ARM64 Android test APK was produced on 19 November 2026. See docs/ANDROID_TEST_APK_READY.md. Its API URL is unconfigured; initial local UI/intake smoke testing can begin, while device results remain unverified.
